@@ -1,5 +1,5 @@
 # Genome-scale detection of positive selection in 9 primates
-TEST
+
 This page contains scripts, analyses and procedures developed in:
 
 > **Genome-scale detection of positive selection in 9 primates predicts human-virus evolutionary conflicts**
@@ -98,7 +98,7 @@ Two methods, same result:
 ## Supplementary data and material
 
 Additional data and material can be found at:
-- This GitHub page: [Supplementary data and material](Supplementary_data_and_material)**
+- This GitHub page: [Supplementary data and material](Supplementary_data_and_material)<br/>
 and
 - http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
 
