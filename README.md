@@ -7,8 +7,8 @@ This page contains scripts, analyses and procedures developed in:
 > bioRxiv 131680; https://doi.org/10.1101/131680
 
 > Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences
-> Radboud university medical center**
-> Nijmegen, The Netherlands**
+> Radboud university medical center
+> Nijmegen, The Netherlands
 
 If you found this resource useful, please consider citing the paper.
 

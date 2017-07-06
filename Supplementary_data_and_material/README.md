@@ -16,7 +16,7 @@ If you found this resource useful, please consider citing the paper.
 
 
 ## Original coding and proteins sequences used in our analyses.
-- Protein-coding DNA sequences**
+- Protein-coding DNA sequences
 `cds_sequences_11170_genes.tar.gz`	(11,170 files, 9 sequences per file, 1 per primate)
 
 - Protein sequences
