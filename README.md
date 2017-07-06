@@ -6,12 +6,21 @@ This page contains scripts, analyses and procedures developed in:
 > Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
 > bioRxiv 131680; https://doi.org/10.1101/131680
 
+> Centre for Molecular and Biomolecular Informatics
+> Radboud Institute for Molecular Life Sciences
+> Radboud university medical center
+> Nijmegen, The Netherlands
+
 If you found this resource useful, please consider citing the paper.
 
 
 ## Disclaimer & Contact
 
 Please note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of steps with extensive manual quality control between them. It may therefore not be straightforward to run all steps smoothly in one go. Feel free to contact me if you run into any issue with individual steps.
+
+> Correspondence: robinvanderlee AT gmail DOT com
+
+[] contact, scholar, researchgate, twitter, ....................
 
 
 ## Requirements
@@ -89,7 +98,10 @@ Two methods, same result:
 
 ## Supplementary data and material
 
-Additional data and material can be found at http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
+Additional data and material can be found at:
+- [Supplementary data and material](Supplementary_data_and_material)
+and
+- http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
 
 
 
