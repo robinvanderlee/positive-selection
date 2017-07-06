@@ -22,10 +22,10 @@ Scripts depend on various programs and modules to run.
 - Install Perl 5: https://www.perl.org/
 - Install various modules using `cpan` or `cpanm`
 	- `cpanm DBI`
-	- `cpanm DBD::mysql`  (which requires a working mysql installation, https://www.mysql.com/)
+	- `cpanm DBD::mysql`  (requires a working mysql installation, https://www.mysql.com/)
 
 ###### BioPerl
-- Install BioPerl: `cpanm Bio::Perl` (http://bioperl.org/)
+- Install BioPerl   `cpanm Bio::Perl` (http://bioperl.org/)
 
 ###### Ensembl API
 - Install the Ensembl API (http://www.ensembl.org/info/docs/api/index.html)
@@ -60,6 +60,7 @@ Jalview
 
 
 NOTE THAT ENSEMBL VERSION USED FOR THE PAPER IS XXX
+ENSEMBL 78
 
 
 
@@ -69,15 +70,17 @@ Please see the `Materials and Methods` section of the paper for detailed explana
 
 #### 1. One-to-one orthologs
 
-Obtain one-to-one ortholog clusters for nine primates with high-coverage whole-genome sequences. These scripts can be edited to obtain orthology clusters for (i) a different set of species than the ones we use here, and (ii) different homology relationships than the one-to-one filter we use.
+Obtain one-to-one ortholog clusters for nine primates with high-coverage whole-genome sequences. These scripts can be edited to obtain orthology clusters for (i) a different set of species than the ones we use here, and (ii) different homology relationships than the one-to-one filter we use.**
 Two methods, same result:
 
 ###### 1a. Ensembl API method
-1. Fetch orthology information using the Ensembl API (see above for installation instructions): `get_one2one_orthologs__Ensembl_API.pl`
+1. Fetch orthology information using the Ensembl API: `get_one2one_orthologs__Ensembl_API.pl`
 2. Clean the results using: `get_one2one_orthologs__Ensembl_API__process_orthologs.r`
 
 ###### 1b. Ensembl BioMart method 
 1. From BioMart, first get orthology information for all species of interest
+![alt text](Images/Step1b__1.png)
+![alt text](Images/Step1b__2.png)
 2. Combine the acquired ortholog information using `get_one2one_orthologs__combine_biomart_orthology_lists.r`
 
 
