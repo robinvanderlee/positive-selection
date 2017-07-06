@@ -1,4 +1,4 @@
-# Genome-scale detection of positive selection in 9 primates
+# Supplementary Data and Material
 
 This directory contain Supplementary Data and Material for
 
@@ -49,8 +49,8 @@ Column 3: human sequence position<br/>
 
 ## Visualization and quality control of alignments and positive selection profiles
 - Barcode plots of positive selection profiles<br/>
-Just the curated set of 331 positively selected genes (PSG): `barcode_plots__331_PSG.tar.gz`<br/>
-All 416 original, apparent positive selected genes (aPSG): `barcode_plots__416_aPSG.tar.gz`<br/>
+  * Just the curated set of 331 positively selected genes (PSG): `barcode_plots__331_PSG.tar.gz`<br/>
+  * All 416 original, apparent positive selected genes (aPSG): `barcode_plots__416_aPSG.tar.gz`<br/>
 
 - Jalview alignment annotations<br/>
 `jalview_alignment_annotations__331_PSG.tar.gz`<br/>
@@ -64,15 +64,15 @@ All 416 original, apparent positive selected genes (aPSG): `barcode_plots__416_a
 <br/>
 
 Jalview annotation files contain annotations for the positively selected residues (PSR), as well as exon coordinates mapped to protein sequences. They can be loaded together with the correct corresponding alignment using (on Mac):
-```Java	-Djava.ext.dirs=/Applications/Jalview/lib/
+```
+Java	-Djava.ext.dirs=/Applications/Jalview/lib/
 	-cp /Applications/Jalview/jalview.jar jalview.b.Jalview
 	-open <ENSEMBL_ID>__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.translated.fa
 	-annotations <ENSEMBL_ID>.jalview_aln_feature
-	-features <ENSEMBL_ID>.jalview_seq_feature```
+	-features <ENSEMBL_ID>.jalview_seq_feature
+```
 
-
-
-Configuration files for PAML codeml.
+## Configuration files for PAML codeml.
 
 -	Inference of reference phylogenetic trees
 codeml_M0_F3X4_tree.ctl
