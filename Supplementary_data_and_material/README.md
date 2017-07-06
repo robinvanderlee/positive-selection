@@ -23,28 +23,26 @@ If you found this resource useful, please consider citing the paper.
 `protein_sequences_11170_genes.tar`	(11,170 files, 9 sequences per file, 1 per primate)
 
 
+## PRANK alignments, filtered and masked using GUIDANCE and TCS.
+- Protein-coding DNA sequence alignments<br/>
+`prank-codon-guidance-tcs-masked-species-sorted.aln__11096.tar.gz`<br/>
+`N`: undetermined nucleotides<br/>
+`n`: masked nucleotides
 
-PRANK alignments, filtered and masked using GUIDANCE and TCS.
+- Translated alignments<br/>
+`prank-codon-guidance-tcs-masked-species-sorted.aln.translated__11096.tar.gz`<br/>
+ `X`: undetermined amino acids<br/>
+`o`: masked amino acids
 
--	Protein-coding DNA sequence alignments
-prank-codon-guidance-tcs-masked-species-sorted.aln__11096.tar.gz
-‘N’: undetermined nucleotides
-‘n’: masked nucleotides
+- Mapping tables of the alignment column to the position in the human sequence<br/>
+`prank-codon-guidance-tcs-masked-species-sorted.aln.translated.mapping-table__11096.tar.gz`<br/>
+Column 1: human amino acid<br/>
+Column 2: columns number of the alignment<br/>
+Column 3: human sequence position<br/>
 
--	Translated alignments
-prank-codon-guidance-tcs-masked-species-sorted.aln.translated__11096.tar.gz
- ‘X’: undetermined amino acids
-‘o’: masked amino acids
-
--	Mapping tables of the alignment column to the position in the human sequence
-prank-codon-guidance-tcs-masked-species-sorted.aln.translated.mapping-table__11096.tar.gz
-Column 1: human amino acid
-Column 2: columns number of the alignment
-Column 3: human sequence position
-
--	Concatenation of the 11,096 protein-coding DNA sequence alignments
-concatenated_alignment__11096_genes__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa.gz
-concatenated_alignment__11096_genes__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.phy.gz
+- Concatenation of the 11,096 protein-coding DNA sequence alignments<br/>
+`concatenated_alignment__11096_genes__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa.gz`
+`concatenated_alignment__11096_genes__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.phy.gz`
 
 
 
