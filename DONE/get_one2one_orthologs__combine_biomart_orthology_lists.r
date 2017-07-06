@@ -1,7 +1,10 @@
-##############################
-## Robin van der Lee        ##
-## robinvanderlee@gmail.com ##
-##############################
+#####################################
+## Robin van der Lee               ##
+## robinvanderlee AT gmail DOT com ##
+############################################################################################################
+## Genome-scale detection of positive selection in 9 primates predicts human-virus evolutionary conflicts ##
+## Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen                                ##
+############################################################################################################
 
 ### INPUT FILES
 #head -10 /Users/robinvanderlee/Research/analysis_positive_selection_primates/get_one2one_orthologs__biomart/mart_export__?.txt 
