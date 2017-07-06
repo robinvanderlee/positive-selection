@@ -17,10 +17,12 @@ If you found this resource useful, please consider citing the paper.
 
 ## Original coding and proteins sequences used in our analyses.
 - Protein-coding DNA sequences<br/>
-`cds_sequences_11170_genes.tar.gz`	(11,170 files, 9 sequences per file, 1 per primate)
+`cds_sequences_11170_genes.tar.gz`<br/>
+(11,170 files, 9 sequences per file, 1 per primate)
 
 - Protein sequences<br/>
-`protein_sequences_11170_genes.tar`	(11,170 files, 9 sequences per file, 1 per primate)
+`protein_sequences_11170_genes.tar`<br/>
+(11,170 files, 9 sequences per file, 1 per primate)
 
 
 ## PRANK alignments, filtered and masked using GUIDANCE and TCS.
@@ -45,30 +47,28 @@ Column 3: human sequence position<br/>
 `concatenated_alignment__11096_genes__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.phy.gz`
 
 
+## Visualization and quality control of alignments and positive selection profiles
+- Barcode plots of positive selection profiles<br/>
+Just the curated set of 331 positively selected genes (PSG): `barcode_plots__331_PSG.tar.gz`<br/>
+All 416 original, apparent positive selected genes (aPSG): `barcode_plots__416_aPSG.tar.gz`<br/>
 
-Visualization and quality control of alignments and positive selection profiles
+- Jalview alignment annotations<br/>
+`jalview_alignment_annotations__331_PSG.tar.gz`<br/>
+`jalview_alignment_annotations__416_aPSG.tar.gz`
 
--	Barcode plots of positive selection profiles
-barcode_plots__331_PSG.tar.gz
-Just the curated set of 331 positively selected genes (PSG)
+- Jalview sequence annotations<br/>
+`jalview_sequence_annotations__331_PSG.tar.gz`<br/>
+`jalview_sequence_annotations__416_aPSG.tar.gz`<br/>
 
-barcode_plots__416_aPSG.tar.gz
-All 416 original, apparent positive selected genes (aPSG)
-
--	Jalview alignment annotations
-jalview_alignment_annotations__331_PSG.tar.gz
-jalview_alignment_annotations__416_aPSG.tar.gz
-
--	Jalview sequence annotations
-jalview_sequence_annotations__331_PSG.tar.gz
-jalview_sequence_annotations__416_aPSG.tar.gz
+<br/>
+<br/>
 
 Jalview annotation files contain annotations for the positively selected residues (PSR), as well as exon coordinates mapped to protein sequences. They can be loaded together with the correct corresponding alignment using (on Mac):
-Java	-Djava.ext.dirs=/Applications/Jalview/lib/
+```Java	-Djava.ext.dirs=/Applications/Jalview/lib/
 	-cp /Applications/Jalview/jalview.jar jalview.b.Jalview
 	-open <ENSEMBL_ID>__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.translated.fa
 	-annotations <ENSEMBL_ID>.jalview_aln_feature
-	-features <ENSEMBL_ID>.jalview_seq_feature
+	-features <ENSEMBL_ID>.jalview_seq_feature```
 
 
 
