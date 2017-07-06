@@ -61,6 +61,7 @@ Column 3: human sequence position<br/>
 `jalview_sequence_annotations__416_aPSG.tar.gz`<br/>
 
 <br/>
+
 Jalview annotation files contain annotations for the positively selected residues (PSR), as well as exon coordinates mapped to protein sequences. They can be loaded together with the correct corresponding alignment using (on Mac):
 ```
 Java	-Djava.ext.dirs=/Applications/Jalview/lib/
