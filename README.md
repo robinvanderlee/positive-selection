@@ -6,10 +6,9 @@ This page contains scripts, analyses and procedures developed in:
 > Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
 > bioRxiv 131680; https://doi.org/10.1101/131680
 
-> Centre for Molecular and Biomolecular Informatics
-> Radboud Institute for Molecular Life Sciences
-> Radboud university medical center
-> Nijmegen, The Netherlands
+> Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences
+> Radboud university medical center**
+> Nijmegen, The Netherlands**
 
 If you found this resource useful, please consider citing the paper.
 
@@ -99,7 +98,7 @@ Two methods, same result:
 ## Supplementary data and material
 
 Additional data and material can be found at:
-- [Supplementary data and material](Supplementary_data_and_material)
+- This GitHub page: [Supplementary data and material](Supplementary_data_and_material)**
 and
 - http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
 
