@@ -15,7 +15,7 @@ This directory contain Supplementary Data and Material for
 If you found this resource useful, please consider citing the paper.
 
 
-## Original coding and proteins sequences used in our analyses.
+## Original coding and proteins sequences used in our analyses
 - Protein-coding DNA sequences<br/>
 `cds_sequences_11170_genes.tar.gz`<br/>
 (11,170 files, 9 sequences per file, 1 per primate)
@@ -25,7 +25,7 @@ If you found this resource useful, please consider citing the paper.
 (11,170 files, 9 sequences per file, 1 per primate)
 
 
-## PRANK alignments, filtered and masked using GUIDANCE and TCS.
+## PRANK alignments, filtered and masked using GUIDANCE and TCS
 - Protein-coding DNA sequence alignments<br/>
 `prank-codon-guidance-tcs-masked-species-sorted.aln__11096.tar.gz`<br/>
 `N`: undetermined nucleotides<br/>
@@ -61,8 +61,6 @@ Column 3: human sequence position<br/>
 `jalview_sequence_annotations__416_aPSG.tar.gz`<br/>
 
 <br/>
-<br/>
-
 Jalview annotation files contain annotations for the positively selected residues (PSR), as well as exon coordinates mapped to protein sequences. They can be loaded together with the correct corresponding alignment using (on Mac):
 ```
 Java	-Djava.ext.dirs=/Applications/Jalview/lib/
@@ -72,33 +70,28 @@ Java	-Djava.ext.dirs=/Applications/Jalview/lib/
 	-features <ENSEMBL_ID>.jalview_seq_feature
 ```
 
-## Configuration files for PAML codeml.
+## Configuration files for PAML codeml
+- Inference of reference phylogenetic trees<br/>
+`codeml_M0_F3X4_tree.ctl`<br/>
+`codeml_M0_F61_tree.ctl`<br/>
 
--	Inference of reference phylogenetic trees
-codeml_M0_F3X4_tree.ctl
-codeml_M0_F61_tree.ctl
-
--	Inference of positive selection
-codeml_M1avM2a_F3X4__large-scale-analysis__template.ctl  
-codeml_M1avM2a_F61__large-scale-analysis__template.ctl
-codeml_M7vM8_F3X4__large-scale-analysis__template.ctl
-codeml_M7vM8_F61__large-scale-analysis__template.ctl
-
+- Inference of positive selection<br/>
+`codeml_M1avM2a_F3X4__large-scale-analysis__template.ctl`<br/>
+`codeml_M1avM2a_F61__large-scale-analysis__template.ctl`<br/>
+`codeml_M7vM8_F3X4__large-scale-analysis__template.ctl`<br/>
+`codeml_M7vM8_F61__large-scale-analysis__template.ctl`<br/>
 
 
-Phylogenetic trees.
+## Phylogenetic trees
+- codeml reference phylogenetic trees<br/>
+`codeml_M0_tree__unrooted_tree__F3X4.tre`<br/>
+`codeml_M0_tree__unrooted_tree__F61.tre`<br/>
 
--	codeml reference phylogenetic trees
-codeml_M0_tree__unrooted_tree__F3X4.tre
-codeml_M0_tree__unrooted_tree__F61.tre
-
--	Other phylogenetic trees
-Ensembl78__9primates__with_taxon_id__unrooted.tre
-Perelman_et_al__9primates__unrooted.tre
-RAxML_bestTree__9primates__unrooted.tree
-
+- Other phylogenetic trees<br/>
+`Ensembl78__9primates__with_taxon_id__unrooted.tre`<br/>
+`Perelman_et_al__9primates__unrooted.tre`<br/>
+`RAxML_bestTree__9primates__unrooted.tre`<br/>
 
 
-GUIDANCE source code fix for running PRANK.
-
-- guidance_prank_fix.pdf
+## GUIDANCE source code fix for running PRANK
+- `guidance_prank_fix.pdf`
