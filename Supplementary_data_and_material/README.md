@@ -6,9 +6,9 @@ This directory contain Supplementary Data and Material for
 > Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
 > bioRxiv 131680; https://doi.org/10.1101/131680
 
-> Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences
-> Radboud university medical center**
-> Nijmegen, The Netherlands**
+> Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences<br/>
+> Radboud university medical center<br/>
+> Nijmegen, The Netherlands
 
 > Correspondence: robinvanderlee AT gmail DOT com
 
@@ -16,10 +16,10 @@ If you found this resource useful, please consider citing the paper.
 
 
 ## Original coding and proteins sequences used in our analyses.
-- Protein-coding DNA sequences
+- Protein-coding DNA sequences<br/>
 `cds_sequences_11170_genes.tar.gz`	(11,170 files, 9 sequences per file, 1 per primate)
 
-- Protein sequences
+- Protein sequences<br/>
 `protein_sequences_11170_genes.tar`	(11,170 files, 9 sequences per file, 1 per primate)
 
 

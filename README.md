@@ -6,8 +6,8 @@ This page contains scripts, analyses and procedures developed in:
 > Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
 > bioRxiv 131680; https://doi.org/10.1101/131680
 
-> Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences
-> Radboud university medical center
+> Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences<br/>
+> Radboud university medical center<br/>
 > Nijmegen, The Netherlands
 
 If you found this resource useful, please consider citing the paper.
