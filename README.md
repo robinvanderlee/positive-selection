@@ -99,9 +99,8 @@ Two methods, same result:
 
 Additional data and material can be found at:
 - This GitHub page: [Supplementary data and material](Supplementary_data_and_material)<br/>
-<br/>
-*and*
-<br/>
+
+and
 - http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
 
 
