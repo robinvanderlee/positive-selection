@@ -1,34 +1,26 @@
-#####################################
-## Robin van der Lee		   ##
-## robinvanderlee AT gmail DOT com ##
-#####################################
+# Genome-scale detection of positive selection in 9 primates
 
-This directory contain Supplementary Material for
+This directory contain Supplementary Data and Material for
 
------------------------------------------------------------------------
-"Genome-scale detection of positive selection in 9 primates
-	predicts human-virus evolutionary conflicts"
+> **Genome-scale detection of positive selection in 9 primates predicts human-virus evolutionary conflicts**
+> Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
+> bioRxiv 131680; https://doi.org/10.1101/131680
 
-by Robin van der Lee et al. 
+> Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences
+> Radboud university medical center**
+> Nijmegen, The Netherlands**
 
-Centre for Molecular and Biomolecular Informatics
-Radboud Institute for Molecular Life Sciences
-Radboud university medical center
-Nijmegen, The Netherlands
+> Correspondence: robinvanderlee AT gmail DOT com
 
-Correspondence: robinvanderlee AT gmail DOT com
------------------------------------------------------------------------
+If you found this resource useful, please consider citing the paper.
 
 
+## Original coding and proteins sequences used in our analyses.
+- Protein-coding DNA sequences**
+`cds_sequences_11170_genes.tar.gz`	(11,170 files, 9 sequences per file, 1 per primate)
 
-
-Original coding and proteins sequences used in our analyses.
-
--	Protein-coding DNA sequences
-cds_sequences_11170_genes.tar.gz		(11,170 files, 9 sequences per file, 1 per primate)
-
--	Protein sequences
-protein_sequences_11170_genes.tar	(11,170 files, 9 sequences per file, 1 per primate)
+- Protein sequences
+`protein_sequences_11170_genes.tar`	(11,170 files, 9 sequences per file, 1 per primate)
 
 
 
