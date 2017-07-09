@@ -19,8 +19,9 @@ Please note that these scripts were not designed to function as a fully-automate
 
 > Correspondence: robinvanderlee AT gmail DOT com<br/>
 > [Google Scholar](https://scholar.google.co.uk/citations?user=ISYCcUUAAAAJ)
-
-[] contact, scholar, researchgate, twitter, ....................
+> [ORCID](http://orcid.org/0000-0001-7391-9438)
+> [Twitter](https://twitter.com/robinvdlee)
+> [LinkedIn](http://nl.linkedin.com/in/robinvdlee)
 
 
 ## Requirements
