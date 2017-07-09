@@ -40,7 +40,6 @@ Scripts depend on various programs and modules to run.
 
 
 
-YEP
 in PERL5PATH
 		functions.pl 
 		+ 	Ensembl_API_subroutines__RvdL
