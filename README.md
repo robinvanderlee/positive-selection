@@ -35,7 +35,7 @@ Scripts depend on various programs and modules to run.
 	- `cpanm DBD::mysql`  (requires a working mysql installation, https://www.mysql.com/)
 - Download the various helper scripts that are also part of this GitHub repository
 	- `functions.pl`
-	- Script in `Ensembl_API_subroutines`
+	- Scripts in `Ensembl_API_subroutines`
 
 ###### BioPerl
 - Install BioPerl   `cpanm Bio::Perl` (http://bioperl.org/)
@@ -73,9 +73,6 @@ library(vioplot)
 
 
 
-require('../Ensembl_API_subroutines__RvdL/get_genetree.pl');
-require('../Ensembl_API_subroutines__RvdL/get_human_protein_coding_genes.pl');
-
 
 Parallel
 PRANK
@@ -85,6 +82,12 @@ PAML/CODEML
 Jalview
 ...
 
+pal2nal?
+muscle
+mafft
+
+GUIDANCE
+t_coffee
 
 NOTE THAT ENSEMBL VERSION USED FOR THE PAPER IS XXX
 ENSEMBL 78
@@ -95,7 +98,8 @@ ENSEMBL 78
 
 Please see the `Materials and Methods` section of the paper for detailed explanations.
 
-#### 1. One-to-one orthologs
+
+### 1. One-to-one orthologs
 Obtain one-to-one ortholog clusters for nine primates with high-coverage whole-genome sequences. These scripts can be edited to obtain orthology clusters for (i) a different set of species than the ones we use here, and (ii) different homology relationships than the one-to-one filter we use.<br/>
 Two methods, same result:
 
@@ -109,7 +113,8 @@ Two methods, same result:
 ![alt text](Images/Step1b__2.png)
 2. Combine the acquired ortholog information using `get_one2one_orthologs__combine_biomart_orthology_lists.r`
 
-#### 2. Sequences
+
+### 2. Sequences
 For all one-to-one orthologs, get the coding DNA (cds) and the corresponding protein sequences from the Ensembl Compara gene trees (as these trees are the basis for the orthology calls).
 
 ###### 2a. Get the sequences
@@ -122,8 +127,10 @@ from 10001 to 11000
 screen -S i11
 perl get_sequences_for_one2one_orthologs_from_gene_tree_pipeline.pl -p -f sequences/parallel_instance_11.txt
 ```
-Note that these steps also fetch the alignments underlying the Compara gene trees. These are not required for later steps.
+Note that these steps also fetch the alignments underlying the Compara gene trees, filtered only for the species of interest. These are not required for later steps.
 
+###### 2b. Check the sequences
+`check_compatibility_protein_cds_sequences.pl`. Tends to only complain at annotated selenocysteine residues.
 
 
 

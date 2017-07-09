@@ -5,6 +5,7 @@
 
 # Project-specific
 files/
+TEST/
 test.pl
 .Rhistory
 
