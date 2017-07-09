@@ -17,7 +17,8 @@ If you found this resource useful, please consider citing the paper.
 
 Please note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of steps with extensive manual quality control between them. It may therefore not be straightforward to run all steps smoothly in one go. Feel free to contact me if you run into any issue with individual steps.
 
-> Correspondence: robinvanderlee AT gmail DOT com
+> Correspondence: robinvanderlee AT gmail DOT com<br/>
+> [Google Scholar](https://scholar.google.co.uk/citations?user=ISYCcUUAAAAJ)
 
 [] contact, scholar, researchgate, twitter, ....................
 
