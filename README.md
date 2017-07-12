@@ -75,7 +75,10 @@ library(vioplot)
 
 
 Parallel
+
 PRANK
+(Löytynoja and Goldman 2008)
+
 PAML/CODEML
 	make sure they are in your path
 
@@ -133,18 +136,23 @@ Note that these steps also fetch the alignments underlying the Compara gene tree
 
 
 ### 3. Alignments
-
+Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters.
 
 ###### 3a. PRANK codon-based multiple alignment
-We  codon-based alignments nucleotide alignments
+This step collects all fasta files containing cDNA sequences for the species of interest, and for each of them runs the `PRANK` in codon mode (`-codon`) to align them. Jobs are executed and monitored in parallel using `GNU Parallel`
+```
+find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 30 --joblog parallel_prank-codon.log --eta 'prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet > /dev/null'
+```
 
-. The
-PRANK algorithm to some extent prevents alignment of nonhomologous regions by flagging
-gaps made during different stages of progressive alignment and permitting their reuse without
-further penalties (Löytynoja and Goldman 2008). As PRANK has been shown to provide
-better initial alignments for large-scale positive selection detection (Schneider et al. 2009;
-Fletcher and Yang 2010; Markova-Raina and Petrov 2011; Jordan and Goldman 2012;
-Privman et al. 2012; Moretti et al. 2014), we obtained multiple alignments of the primate
+
+
+uses GNU Parallel to 
+https://www.gnu.org/software/parallel/
+
+
+find sequences/cds/ | grep prank | wc -l
+
+ we obtained multiple alignments of the primate
 ortholog clusters using the PRANK codon mode (prank +F –codon; v.140603). 
 We used the
 default settings of (i) obtaining a guide tree from MAFFT for the progressive alignment
