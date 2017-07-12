@@ -26,10 +26,10 @@ Note that these scripts were not designed to function as a fully-automated pipel
 
 ## Requirements
 
-Scripts depend on various programs and modules to run.
+Scripts depend on various programs and modules to run. Refer to the paper for which versions were used.
 
 ###### Perl
-- Install Perl 5: https://www.perl.org/
+- Perl 5: https://www.perl.org/
 - Install various modules using `cpan` or `cpanm`
 	- `cpanm DBI`
 	- `cpanm DBD::mysql`  (requires a working mysql installation, https://www.mysql.com/)
@@ -37,16 +37,16 @@ Scripts depend on various programs and modules to run.
 	- `functions.pl`
 	- Scripts in `Ensembl_API_subroutines`
 
-###### BioPerl
-- Install BioPerl `cpanm Bio::Perl` (http://bioperl.org/)
-
-###### Ensembl API
-- Install the Ensembl API (http://www.ensembl.org/info/docs/api/index.html)
+###### BioPerl & Ensembl API
+- BioPerl `cpanm Bio::Perl` (http://bioperl.org/)
+- Ensembl API (http://www.ensembl.org/info/docs/api/index.html)
 
 ###### R
-- Install R: https://www.r-project.org/
+- R: https://www.r-project.org/
 - Install the following packages:
 	- ``
+
+
 
 R
 	+ modules
@@ -71,16 +71,24 @@ library(scales)
 library(vioplot)
 
 
+###### Command line tools
+GNU Parallel (https://www.gnu.org/software/parallel/)
+
+###### Aligners and alignment analysis tools
+- PRANK multiple sequence aligner (http://wasabiapp.org/software/prank/)
 
 
 
-Parallel
+###### PAML
+PAML software package, which includes `codeml` (http://abacus.gene.ucl.ac.uk/software/paml.html)
 
-PRANK
-(Löytynoja and Goldman 2008)
 
-PAML/CODEML
-	make sure they are in your path
+
+
+
+
+
+
 
 Jalview
 ...
@@ -92,14 +100,12 @@ mafft
 GUIDANCE
 t_coffee
 
-NOTE THAT ENSEMBL VERSION USED FOR THE PAPER IS XXX
-Ensembl release 78, December 2014 (http://dec2014.archive.ensembl.org/)
+
 
 
 ## Steps
 
-Please see the `Materials and Methods` section of the paper for theory and detailed explanations.
-
+Please see the `Materials and Methods` section of the paper for theory and detailed explanations. Analyses presented in the paper are based on Ensembl release 78, December 2014 (http://dec2014.archive.ensembl.org/).
 
 ### 1. One-to-one orthologs
 Obtain one-to-one ortholog clusters for nine primates with high-coverage whole-genome sequences. These scripts can be edited to obtain orthology clusters for (i) a different set of species than the ones we use here, and (ii) different homology relationships than the one-to-one filter we use.<br/>
@@ -136,37 +142,62 @@ Note that these steps also fetch the alignments underlying the Compara gene tree
 
 
 ### 3. Alignments
-Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters.
+Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters. Then assess the confidence in the alignments using two indepedent approaches. Low confidence scores of either method led us to remove entire alignments from our analysis or mask unreliable individual columns and codons.
 
 ###### 3a. PRANK codon-based multiple alignment
-This step collects all fasta files containing cDNA sequences for the species of interest, and for each of them runs the `PRANK` in codon mode (`-codon`) to align them. Jobs are executed and monitored in parallel using `GNU Parallel`
+This step collects all fasta files containing cDNA sequences for the species of interest, and for each of them runs the `PRANK` in codon mode (`-codon`) to align them. Jobs are executed and monitored in parallel using `GNU Parallel` (set number of cores with `--max-procs`).
 ```
-find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 30 --joblog parallel_prank-codon.log --eta 'prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet > /dev/null'
+find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --joblog parallel_prank-codon.log --eta 'prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet > /dev/null'
 ```
-
-
-
-uses GNU Parallel to 
-https://www.gnu.org/software/parallel/
-
-
-find sequences/cds/ | grep prank | wc -l
-
- we obtained multiple alignments of the primate
-ortholog clusters using the PRANK codon mode (prank +F –codon; v.140603). 
-We used the
-default settings of (i) obtaining a guide tree from MAFFT for the progressive alignment
-procedure and (ii) selecting the best alignment from five iterations
-
-
-Some useful command to monitor progress:
+This effectively executes the following:
 ```
-XX
+find sequences/ -type f -name "*__cds.fa" | parallel 'echo prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet'
+...
+prank +F -codon -d=sequences//cds/ENSG00000274211__cds.fa -o=sequences//cds/ENSG00000274211__cds.prank-codon.aln.fa -quiet
+prank +F -codon -d=sequences//cds/ENSG00000274523__cds.fa -o=sequences//cds/ENSG00000274523__cds.prank-codon.aln.fa -quiet
+prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG00000019549__cds.prank-codon.aln.fa -quiet
+...
 ```
-
-
 
 ###### 3b. GUIDANCE - assessment and masking
+1. Run GUIDANCE to assess the sensitivity of the alignment to perturbations of the guide tree
+```
+find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_guidance-prank-codon.log --eta 'mkdir -p sequences/guidance-prank-codon/{/.}; guidance.pl --program GUIDANCE --seqFile {} --seqType nuc --msaProgram PRANK --MSA_Param "\+F \-codon" --outDir sequences/guidance-prank-codon/{/.} &> sequences/guidance-prank-codon/{/.}/parallel_guidance-prank-codon.output'
+```
+
+*Note that this requires a bug fix in GUIDANCE (version 1.5 - 2014, August 7), see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
+
+
+
+http://guidance.tau.ac.il/
+
+
+
+=> Monitor progress
+find sequences/guidance-prank-codon/ -type f | grep aln.std$ | xargs cat | grep Writing -A 1
+find sequences/guidance-prank-codon/ -type f | grep PRANK.std$ | xargs cat | grep Writing -A 1
+find sequences/guidance-prank-codon/ -name "parallel_guidance-prank-codon.output"
+psgrep rvdlee | grep prank | grep -v grep | wc -l
+psgrep rvdlee | grep guidance | grep -v grep | wc -l
+tail -f parallel_guidance-prank-codon.log
+ls sequences/guidance-prank-codon/ | wc -l
+
+
+2. `perl mask_msa_based_on_guidance_results.pl`. Analyze and parse the results, and mask the alignments based on the GUIDANCE scores.
+
+
+
+
+
+
+find sequences/guidance-prank-codon-masked/ | grep `gshuf guidance-prank-codon-masked_done | head -1` | grep html$ | xargs open
+ --env
+
+
+
+TCS assesses alignment stability by independently re-aligning all possible pairs of sequences and scoring positions through comparison with the multiple alignment (36). We ran TCS on translated PRANK codon alignments (t_coffee -other_pg seq_reformat -action +translate; t_coffee -evaluate -method proba_pair -output score_ascii, score_html; Version_11.00.61eb9e4).
+
+Low confidence scores of either method led us to remove entire alignments from our analysis or mask individual columns and codons. Alignments were removed in the case of a low score (default cutoffs of <60% for GUIDANCE, <50% for TCS) for (i) the overall alignment or (ii) one or more sequences (i.e. we only retained alignments with sequences for all nine species). Entire columns were masked if GUIDANCE <93% or TCS <4; individual codons were masked if <90% or <4. Masked nucleotides were converted to ‘n’ characters to distinguish them from undetermined nucleotides in the genome assemblies (‘N’). For visualization and quality inspection purposes we translated the masked codon alignments to the corresponding protein alignment. Nucleotides ‘n’ and ‘N’ were converted to ‘o’ and ‘X’ upon translation, respectively. Detailed visual inspection revealed the value of our masking approach: masked codons tend to comprise unreliable alignment regions, primarily consisting of large inserts, insertion-deletion boundaries (i.e. regions bordering well-aligned blocks), and aligned but nonhomologous codons (Supplementary Files).
 
 
 
@@ -178,7 +209,21 @@ XX
 Steps are all CDS/codon based, but this is handy for checking alignments, analyzing results etc
 
 
+###### 3e. View alignments
 
+
+
+
+Some useful commands to monitor progress:
+```
+XX
+```
+find sequences/cds/ | grep prank | wc -l
+
+> test parallel commands
+find sequences/ -type f -name "*__cds.fa" | parallel 'echo prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet'
+
+tail -f parallel_guidance-prank-codon.log
 
 
 
@@ -189,9 +234,4 @@ Additional data and material can be found at:
 
 and
 - http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
-
-
-
-
-
 
