@@ -10,12 +10,12 @@ This page contains scripts, analyses and procedures developed in:
 > Radboud university medical center<br/>
 > Nijmegen, The Netherlands
 
-If you found this resource useful, please consider citing the paper.
+Please consider citing the paper if you found this resource useful.
 
 
 ## Issues & Contact
 
-Please note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of steps with extensive manual quality control between them. It will therefore not be straightforward to run all steps smoothly in one go. Please feel free to contact me if you run into any issue with individual steps.
+Note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of steps with extensive manual quality control between them. It will therefore not be straightforward to run all steps smoothly in one go. Feel free to contact me if you run into any issue with individual steps.
 
 > **robinvanderlee AT gmail DOT com**<br/><br/>
 > [Google Scholar](https://scholar.google.co.uk/citations?user=ISYCcUUAAAAJ)<br/>
@@ -38,7 +38,7 @@ Scripts depend on various programs and modules to run.
 	- Scripts in `Ensembl_API_subroutines`
 
 ###### BioPerl
-- Install BioPerl   `cpanm Bio::Perl` (http://bioperl.org/)
+- Install BioPerl `cpanm Bio::Perl` (http://bioperl.org/)
 
 ###### Ensembl API
 - Install the Ensembl API (http://www.ensembl.org/info/docs/api/index.html)
@@ -90,13 +90,12 @@ GUIDANCE
 t_coffee
 
 NOTE THAT ENSEMBL VERSION USED FOR THE PAPER IS XXX
-ENSEMBL 78
-
+Ensembl release 78, December 2014 (http://dec2014.archive.ensembl.org/)
 
 
 ## Steps
 
-Please see the `Materials and Methods` section of the paper for detailed explanations.
+Please see the `Materials and Methods` section of the paper for theory and detailed explanations.
 
 
 ### 1. One-to-one orthologs
@@ -117,7 +116,7 @@ Two methods, same result:
 ### 2. Sequences
 For all one-to-one orthologs, get the coding DNA (cds) and the corresponding protein sequences from the Ensembl Compara gene trees (as these trees are the basis for the orthology calls).
 
-###### 2a. Get the sequences
+###### 2a. Get sequences
 1. Run `start_parallel_sequence_fetching.pl`, which reads the ortholog cluster information, divides the genes in batches of 1000 (`$batchsize` can be changed in the script) and prints the instructions for the next step:
 2. `get_sequences_for_one2one_orthologs_from_gene_tree_pipeline.pl`. This step fetches the sequences. E.g.
 ```
@@ -127,10 +126,49 @@ from 10001 to 11000
 screen -S i11
 perl get_sequences_for_one2one_orthologs_from_gene_tree_pipeline.pl -p -f sequences/parallel_instance_11.txt
 ```
-Note that these steps also fetch the alignments underlying the Compara gene trees, filtered only for the species of interest. These are not required for later steps.
+Note that these steps also fetch the alignments underlying the Compara gene trees, filtered for the species of interest. These are not required for later steps.
 
-###### 2b. Check the sequences
+###### 2b. Check sequences
 `check_compatibility_protein_cds_sequences.pl`. Tends to only complain at annotated selenocysteine residues.
+
+
+### 3. Alignments
+
+
+###### 3a. PRANK codon-based multiple alignment
+We  codon-based alignments nucleotide alignments
+
+. The
+PRANK algorithm to some extent prevents alignment of nonhomologous regions by flagging
+gaps made during different stages of progressive alignment and permitting their reuse without
+further penalties (Löytynoja and Goldman 2008). As PRANK has been shown to provide
+better initial alignments for large-scale positive selection detection (Schneider et al. 2009;
+Fletcher and Yang 2010; Markova-Raina and Petrov 2011; Jordan and Goldman 2012;
+Privman et al. 2012; Moretti et al. 2014), we obtained multiple alignments of the primate
+ortholog clusters using the PRANK codon mode (prank +F –codon; v.140603). 
+We used the
+default settings of (i) obtaining a guide tree from MAFFT for the progressive alignment
+procedure and (ii) selecting the best alignment from five iterations
+
+
+Some useful command to monitor progress:
+```
+XX
+```
+
+
+
+###### 3b. GUIDANCE - assessment and masking
+
+
+
+###### 3c. TCS - assessment and masking
+
+
+
+###### 3d. Translate alignments
+Steps are all CDS/codon based, but this is handy for checking alignments, analyzing results etc
+
 
 
 
