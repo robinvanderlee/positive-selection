@@ -33,7 +33,7 @@ If you found this resource useful, please consider citing the paper.
 
 - Translated alignments<br/>
 `prank-codon-guidance-tcs-masked-species-sorted.aln.translated__11096.tar.gz`<br/>
- `X`: undetermined amino acids<br/>
+`X`: undetermined amino acids<br/>
 `o`: masked amino acids
 
 - Mapping tables of the alignment column to the position in the human sequence<br/>

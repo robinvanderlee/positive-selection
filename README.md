@@ -76,29 +76,19 @@ GNU Parallel (https://www.gnu.org/software/parallel/)
 
 ###### Aligners and alignment analysis tools
 - PRANK multiple sequence aligner (http://wasabiapp.org/software/prank/)
-
-
+- GUIDANCE (http://guidance.tau.ac.il/)<br/>
+*Note that a bug fix is required for GUIDANCE (version 1.5 - 2014, August 7) to work with PRANK, see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
+- t_coffee, which includes `TCS` (http://www.tcoffee.org/Projects/tcoffee/)
 
 ###### PAML
 PAML software package, which includes `codeml` (http://abacus.gene.ucl.ac.uk/software/paml.html)
 
 
-
-
-
-
-
-
-
 Jalview
-...
-
 pal2nal?
 muscle
 mafft
 
-GUIDANCE
-t_coffee
 
 
 
@@ -149,9 +139,11 @@ This step collects all fasta files containing cDNA sequences for the species of 
 ```
 find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --joblog parallel_prank-codon.log --eta 'prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet > /dev/null'
 ```
-This effectively executes the following:
+This effectively execute the following commands:
 ```
 find sequences/ -type f -name "*__cds.fa" | parallel 'echo prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet'
+```
+```
 ...
 prank +F -codon -d=sequences//cds/ENSG00000274211__cds.fa -o=sequences//cds/ENSG00000274211__cds.prank-codon.aln.fa -quiet
 prank +F -codon -d=sequences//cds/ENSG00000274523__cds.fa -o=sequences//cds/ENSG00000274523__cds.prank-codon.aln.fa -quiet
@@ -160,48 +152,36 @@ prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG
 ```
 
 ###### 3b. GUIDANCE - assessment and masking
-1. Run GUIDANCE to assess the sensitivity of the alignment to perturbations of the guide tree
+1. Run GUIDANCE to assess the sensitivity of the alignment to perturbations of the guide tree.<br/>
+*Note that this requires a bug fix in GUIDANCE (version 1.5 - 2014, August 7), see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
 ```
 find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_guidance-prank-codon.log --eta 'mkdir -p sequences/guidance-prank-codon/{/.}; guidance.pl --program GUIDANCE --seqFile {} --seqType nuc --msaProgram PRANK --MSA_Param "\+F \-codon" --outDir sequences/guidance-prank-codon/{/.} &> sequences/guidance-prank-codon/{/.}/parallel_guidance-prank-codon.output'
 ```
 
-*Note that this requires a bug fix in GUIDANCE (version 1.5 - 2014, August 7), see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
-
-
-
-http://guidance.tau.ac.il/
-
-
-
-=> Monitor progress
-find sequences/guidance-prank-codon/ -type f | grep aln.std$ | xargs cat | grep Writing -A 1
-find sequences/guidance-prank-codon/ -type f | grep PRANK.std$ | xargs cat | grep Writing -A 1
-find sequences/guidance-prank-codon/ -name "parallel_guidance-prank-codon.output"
-psgrep rvdlee | grep prank | grep -v grep | wc -l
-psgrep rvdlee | grep guidance | grep -v grep | wc -l
-tail -f parallel_guidance-prank-codon.log
-ls sequences/guidance-prank-codon/ | wc -l
-
-
-2. `perl mask_msa_based_on_guidance_results.pl`. Analyze and parse the results, and mask the alignments based on the GUIDANCE scores.
-
-
-
-
-
-
-find sequences/guidance-prank-codon-masked/ | grep `gshuf guidance-prank-codon-masked_done | head -1` | grep html$ | xargs open
- --env
-
-
-
-TCS assesses alignment stability by independently re-aligning all possible pairs of sequences and scoring positions through comparison with the multiple alignment (36). We ran TCS on translated PRANK codon alignments (t_coffee -other_pg seq_reformat -action +translate; t_coffee -evaluate -method proba_pair -output score_ascii, score_html; Version_11.00.61eb9e4).
-
-Low confidence scores of either method led us to remove entire alignments from our analysis or mask individual columns and codons. Alignments were removed in the case of a low score (default cutoffs of <60% for GUIDANCE, <50% for TCS) for (i) the overall alignment or (ii) one or more sequences (i.e. we only retained alignments with sequences for all nine species). Entire columns were masked if GUIDANCE <93% or TCS <4; individual codons were masked if <90% or <4. Masked nucleotides were converted to ‘n’ characters to distinguish them from undetermined nucleotides in the genome assemblies (‘N’). For visualization and quality inspection purposes we translated the masked codon alignments to the corresponding protein alignment. Nucleotides ‘n’ and ‘N’ were converted to ‘o’ and ‘X’ upon translation, respectively. Detailed visual inspection revealed the value of our masking approach: masked codons tend to comprise unreliable alignment regions, primarily consisting of large inserts, insertion-deletion boundaries (i.e. regions bordering well-aligned blocks), and aligned but nonhomologous codons (Supplementary Files).
-
-
+2. `perl mask_msa_based_on_guidance_results.pl`. Analyze and parse the GUIDANCE results, and mask the alignments based on the scores.
 
 ###### 3c. TCS - assessment and masking
+Run T-Coffee TCS to assess alignment stability by independently re-aligning all possible pairs of sequences. Note that we ran TCS on translated PRANK codon alignments.<br/>
+
+1. Translate the PRANK alignments to protein. Note that we use the PRANK alignments generated through GUIDANCE (Step 3b) to ensure we are masking the same alignments with both GUIDANCE and TCS!
+```
+find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_translate-prank-codon-alignments.log --eta 't_coffee -other_pg seq_reformat -in {} -action +translate -output fasta_aln > sequences/tcs-prank-codon/{/.}.translated.fa'
+```
+
+2. Run TCS on the translated PRANK alignments:
+```
+find . -type f -name "*prank-codon.aln.translated.fa" | parallel --max-procs 4 --nice 10 --joblog ../../parallel_tcs-t-coffee.log --eta 't_coffee -infile {} -evaluate -method proba_pair -output score_ascii, score_html -quiet  > /dev/null'
+```
+
+3. `perl mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results, and mask the alignments based on the scores. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
+
+
+
+
+**********************
+TO TEST 3b2 and 3c1-3
+**********************
+
 
 
 
@@ -219,11 +199,11 @@ Some useful commands to monitor progress:
 XX
 ```
 find sequences/cds/ | grep prank | wc -l
-
-> test parallel commands
-find sequences/ -type f -name "*__cds.fa" | parallel 'echo prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet'
-
 tail -f parallel_guidance-prank-codon.log
+find sequences/guidance-prank-codon/ -type f | grep PRANK.std$ | xargs cat | grep Writing -A 1
+
+
+
 
 
 
