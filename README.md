@@ -24,9 +24,19 @@ Note that these scripts were not designed to function as a fully-automated pipel
 > [LinkedIn](http://nl.linkedin.com/in/robinvdlee)
 
 
+## Supplementary data and material
+
+Additional data and material can be found at:
+- This GitHub page: [Supplementary data and material](Supplementary_data_and_material)<br/>
+
+and
+- http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
+
+
 ## Requirements
 
 Scripts depend on various programs and modules to run. Refer to the paper for which versions were used.
+*Make sure all of these programs are in your [`$PATH`](http://www.linfo.org/path_env_var.html)*
 
 ###### Perl
 - Perl 5: https://www.perl.org/
@@ -43,11 +53,10 @@ Scripts depend on various programs and modules to run. Refer to the paper for wh
 
 ###### R
 - R: https://www.r-project.org/
+
+*****************
 - Install the following packages:
 	- ``
-
-
-
 R
 	+ modules
 	?? gebruik ik dit script? ./Biological_correlations_PSR/basic_statistics_of_data/aa_freqs/analyze_aa_freqs.r:require(lattice)
@@ -69,6 +78,7 @@ library(plotrix)
 library(rtracklayer)
 library(scales)
 library(vioplot)
+*****************
 
 
 ###### Command line tools
@@ -79,23 +89,16 @@ GNU Parallel (https://www.gnu.org/software/parallel/)
 - GUIDANCE (http://guidance.tau.ac.il/)<br/>
 *Note that a bug fix is required for GUIDANCE (version 1.5 - 2014, August 7) to work with PRANK, see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
 - t_coffee, which includes `TCS` (http://www.tcoffee.org/Projects/tcoffee/)
+- Jalview alignment viewer (http://www.jalview.org/)
 
 ###### PAML
 PAML software package, which includes `codeml` (http://abacus.gene.ucl.ac.uk/software/paml.html)
 
 
-Jalview
-pal2nal?
-muscle
-mafft
-
-
-
-
-
 ## Steps
 
-Please see the `Materials and Methods` section of the paper for theory and detailed explanations. Analyses presented in the paper are based on Ensembl release 78, December 2014 (http://dec2014.archive.ensembl.org/).
+Please see the `Materials and Methods` section of the paper for theory and detailed explanations.<br/>
+Analyses presented in the paper are based on Ensembl release 78, December 2014 (http://dec2014.archive.ensembl.org/).
 
 ### 1. One-to-one orthologs
 Obtain one-to-one ortholog clusters for nine primates with high-coverage whole-genome sequences. These scripts can be edited to obtain orthology clusters for (i) a different set of species than the ones we use here, and (ii) different homology relationships than the one-to-one filter we use.<br/>
@@ -165,6 +168,7 @@ Run T-Coffee TCS to assess alignment stability by independently re-aligning all 
 
 1. Translate the PRANK alignments to protein. Note that we use the PRANK alignments generated through GUIDANCE (Step 3b) to ensure we are masking the same alignments with both GUIDANCE and TCS!
 ```
+mkdir -p sequences/tcs-prank-codon
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_translate-prank-codon-alignments.log --eta 't_coffee -other_pg seq_reformat -in {} -action +translate -output fasta_aln > sequences/tcs-prank-codon/{/.}.translated.fa'
 ```
 
@@ -179,18 +183,40 @@ find . -type f -name "*prank-codon.aln.translated.fa" | parallel --max-procs 4 -
 
 
 **********************
-TO TEST 3b2 and 3c1-3
+TO TEST 3c1-3
 **********************
 
 
 
 
 ###### 3d. Translate alignments
-Steps are all CDS/codon based, but this is handy for checking alignments, analyzing results etc
+Translate masked cDNA alignments to facilitate quality control and visualization:
+```
+find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_translate-prank-codon-guidance-tcs-masked-species-sorted-alignments.log --eta 't_coffee -other_pg seq_reformat -in {} -action +translate -output fasta_aln > sequences/prank-codon-masked/{/.}.translated.fa'
+```
 
 
-###### 3e. View alignments
 
+
+
+
+
+
+
+
+Evolutionary analyses: reference phylogenetic tree
+Maximum likelihood (ML) dN/dS analysis to infer positive selection of genes and codons was performed with codeml of the PAML software package v4.8a (20)(Text S1). We used a single phylogenetic tree with branch lengths for the ML analysis of all alignments to limit the influence of gene-specific phylogenetic variability. To obtain this reference tree, we concatenated all 11,096 masked alignments into one large alignment and ran the codeml M0 model (i.e. fitting a single dN/dS for all sites; NSsites = 0, model = 0, method = 1, fix_blength = 0), provided with the well-supported topology of the primate phylogeny (30, 37). We took this approach for two main reasons: (i) to best reflect the overall evolutionary distance between the primate species (which influences codon transition probabilities in the ML calculations, Text S1), and (ii) to estimate branch lengths in units compatible with codon-based evolutionary analyses, i.e. the number of nucleotide substitutions per codon. For comparisons with other primate phylogenetic trees, the branch lengths of our codon-based tree were converted to nucleotide substitutions per site (i.e. nucleotide substitutions per codon divided by three). The codeml M0 model under the F61 or F3X4 codon frequency parameters resulted in virtually identical phylogenetic trees (median branch length difference of a factor 0.99) and dN/dS estimates (0.213 vs. 0.217; Figure S1, Supplementary Files). The M0 tree is also highly similar to a ML phylogenetic tree inferred from the same concatenated alignment using nucleotide rather than codon substitution evolutionary models (median branch length difference of a factor 0.98; Figure S1; RAxML v7.2.8a (38); -f a -m GTRCAT -N 100).
+
+Evolutionary analyses: inference of positive selection
+In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. These combinations consist of two sets of evolutionary models: M1a (neutral) vs. M2a (selection); M7 (beta) vs. M8 (beta&ω). And two codon frequency models: F61 (empirical estimates for the frequency of each codon); F3X4 (calculated from the average nucleotide frequencies at the three codon positions). I.e. we used combinations of the following codeml parameters: NSsites = 1 2 or NSsites = 7 8; CodonFreq = 2 or CodonFreq = 3; cleandata = 0, method = 0, fix_blength = 2. 2,992 (27%) genes showed significant evidence of apparent positive selection at the level of the whole alignment (Figure S2A).
+
+Second, for the significant aPSG we retrieved from the site-specific codeml ML analyses (step one, above) the Bayesian posterior probabilities, which indicate the individual codons that may have evolved under positive selection (Text S1)(39). We included apparent Positively Selected Residues (aPSR) if their codons were assigned high posteriors under all four ML parameter combinations (Pposterior (ω > 1)   > 0.99). 416 aPSG contain at least one significant aPSR (1405 in total; Figure S2B).
+
+Quality control
+We subjected each inferred aPSR and aPSG to visual inspection (Table S3). In this way we identified several indicators for positive selection artefacts that we then used for their automated detection in the complete set. First, we obtained the gene trees for our individual masked alignments using RAxML (38)(-f a -m GTRGAMMAI -N 100). Type-I [orthology] and -II [transcript definitions] artefacts tend to lead to gene trees with (i) a long-branched clade consisting of the set of sequences that are distinct from the others (e.g. paralogs, alternative exons), and (ii) a topology that is not congruent with the well-supported species phylogeny (Figure S3). We filtered out likely false positives by selecting gene trees with an extreme longest/average branch length ratio. Second, to assess the distribution of PSR across exons, we mapped Ensembl exon coordinates for human transcripts to the human protein sequences. Type-II [transcript definitions] and -III [termini] artefacts could often be filtered out by a high concentration of aPSR located to a single exon (Supplementary Files).
+
+GC-biased gene conversion (gBGC)
+The effects of gBGC seem specifically correlated to regions of high meiotic recombination in males rather than females (40). We calculated genomic overlaps of PSG and non-PSG with male (8.2% of PSG, 7.7% of non-PSG) and female (6.7% of PSG, 8.1% of non-PSG) recombination hotspots in human, which we obtained from the family-based deCODE maps (41) via the UCSC genome browser (42). Sex-averaged recombination hotspots estimated from linkage disequilibrium patterns were obtained from HapMap Release 22 (43)(43% of PSG, 39% of non-PSG). Human genomic regions under the influence of gBGC were predicted by phastBias (44)(9.1% of PSG, 11.4% of non-PSG).
 
 
 
@@ -207,11 +233,23 @@ find sequences/guidance-prank-codon/ -type f | grep PRANK.std$ | xargs cat | gre
 
 
 
-## Supplementary data and material
 
-Additional data and material can be found at:
-- This GitHub page: [Supplementary data and material](Supplementary_data_and_material)<br/>
+*****
+View alignments and annotations
+*****
+Jalview annotation files contain annotations for the positively selected residues (PSR), as well as exon coordinates mapped to protein sequences. They can be loaded together with the correct corresponding alignment using (on Mac):
+```
+Java	-Djava.ext.dirs=/Applications/Jalview/lib/
+	-cp /Applications/Jalview/jalview.jar jalview.b.Jalview
+	-open <ENSEMBL_ID>__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.translated.fa
+	-annotations <ENSEMBL_ID>.jalview_aln_feature
+	-features <ENSEMBL_ID>.jalview_seq_feature
+```
 
-and
-- http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
+
+
+
+
+
+
 
