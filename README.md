@@ -38,7 +38,7 @@ and
 Scripts depend on various programs and modules to run. Refer to the paper for which versions were used.
 *Make sure all of these programs are in your [`$PATH`](http://www.linfo.org/path_env_var.html)*<br/>
 
-##### Perl
+#### Perl
 - Perl 5: https://www.perl.org/
 - Install various modules using `cpan` or `cpanm`
 	- `cpanm DBI`
@@ -47,11 +47,11 @@ Scripts depend on various programs and modules to run. Refer to the paper for wh
 	- `functions.pl`
 	- Scripts in `Ensembl_API_subroutines`
 
-##### BioPerl & Ensembl API
+#### BioPerl & Ensembl API
 - BioPerl `cpanm Bio::Perl` (http://bioperl.org/)
 - Ensembl API (http://www.ensembl.org/info/docs/api/index.html)
 
-##### R
+#### R
 - R: https://www.r-project.org/
 
 *****************
@@ -81,17 +81,17 @@ library(vioplot)
 *****************
 
 
-##### Command line tools
+#### Command line tools
 GNU Parallel (https://www.gnu.org/software/parallel/)
 
-##### Aligners and alignment analysis tools
+#### Aligners and alignment analysis tools
 - PRANK multiple sequence aligner (http://wasabiapp.org/software/prank/)
 - GUIDANCE (http://guidance.tau.ac.il/)<br/>
 *Note that a bug fix is required for GUIDANCE (version 1.5 - 2014, August 7) to work with PRANK, see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
 - t_coffee, which includes `TCS` (http://www.tcoffee.org/Projects/tcoffee/)
 - Jalview alignment viewer (http://www.jalview.org/)
 
-##### PAML
+#### PAML
 PAML software package, which includes `codeml` (http://abacus.gene.ucl.ac.uk/software/paml.html)
 
 
@@ -104,11 +104,11 @@ Analyses presented in the paper are based on Ensembl release 78, December 2014 (
 Obtain one-to-one ortholog clusters for nine primates with high-coverage whole-genome sequences. These scripts can be edited to obtain orthology clusters for (i) a different set of species than the ones we use here, and (ii) different homology relationships than the one-to-one filter we use.<br/>
 Two methods, same result:
 
-##### 1a. Ensembl API method
+#### 1a. Ensembl API method
 1. Fetch orthology information using the Ensembl API: `get_one2one_orthologs__Ensembl_API.pl`
 2. Clean the results using: `get_one2one_orthologs__Ensembl_API__process_orthologs.r`
 
-##### 1b. Ensembl BioMart method 
+#### 1b. Ensembl BioMart method 
 1. From BioMart, first get orthology information for all species of interest
 ![alt text](Images/Step1b__1.png)
 ![alt text](Images/Step1b__2.png)
@@ -118,7 +118,7 @@ Two methods, same result:
 ### 2. Sequences
 For all one-to-one orthologs, get the coding DNA (cds) and the corresponding protein sequences from the Ensembl Compara gene trees (as these trees are the basis for the orthology calls).
 
-##### 2a. Get sequences
+#### 2a. Get sequences
 1. Run `start_parallel_sequence_fetching.pl`, which reads the ortholog cluster information, divides the genes in batches of 1000 (`$batchsize` can be changed in the script) and prints the instructions for the next step:
 2. `get_sequences_for_one2one_orthologs_from_gene_tree_pipeline.pl`. This step fetches the sequences. E.g.
 ```bash
@@ -130,14 +130,14 @@ perl get_sequences_for_one2one_orthologs_from_gene_tree_pipeline.pl -p -f sequen
 ```
 Note that these steps also fetch the alignments underlying the Compara gene trees, filtered for the species of interest. These are not required for later steps.
 
-##### 2b. Check sequences
+#### 2b. Check sequences
 `check_compatibility_protein_cds_sequences.pl`. Tends to only complain at annotated selenocysteine residues.
 
 
 ### 3. Alignments
 Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters. Then assess the confidence in the alignments using two indepedent approaches. Low confidence scores of either method led us to remove entire alignments from our analysis or mask unreliable individual columns and codons.
 
-##### 3a. PRANK codon-based multiple alignment
+#### 3a. PRANK codon-based multiple alignment
 This step collects all fasta files containing cDNA sequences for the species of interest, and for each of them runs the `PRANK` in codon mode (`-codon`) to align them. Jobs are executed and monitored in parallel using `GNU Parallel` (set number of cores with `--max-procs`).
 ```bash
 find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --joblog parallel_prank-codon.log --eta 'prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet > /dev/null'
@@ -154,7 +154,7 @@ prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG
 ...
 ```
 
-##### 3b. GUIDANCE - assessment and masking
+#### 3b. GUIDANCE - assessment and masking
 1. Run GUIDANCE to assess the sensitivity of the alignment to perturbations of the guide tree.<br/>
 *Note that this requires a bug fix in GUIDANCE (version 1.5 - 2014, August 7), see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
 ```bash
@@ -163,7 +163,7 @@ find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --nice 10 --j
 
 2. `mask_msa_based_on_guidance_results.pl`. Analyze and parse the GUIDANCE results, and mask the alignments based on the scores.
 
-##### 3c. TCS - assessment and masking
+#### 3c. TCS - assessment and masking
 Run T-Coffee TCS to assess alignment stability by independently re-aligning all possible pairs of sequences. Note that we ran TCS on translated PRANK codon alignments.<br/>
 
 1. Translate the PRANK alignments to protein. Note that we use the PRANK alignments generated through GUIDANCE (Step 3b) to ensure we are masking the same alignments with both GUIDANCE and TCS!
@@ -181,7 +181,7 @@ cd ../../
 
 3. `mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results, and mask the alignments based on the scores. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
 
-##### 3d. Sort and translate alignments
+#### 3d. Sort and translate alignments
 1. Sort sequences within alignment fasta files by species using `sort_sequences_by_taxon.pl`, so that all alignment files have the same ordering.
 ```
 cd sequences/prank-codon-masked/
