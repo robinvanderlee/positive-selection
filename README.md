@@ -161,7 +161,7 @@ prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG
 find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_guidance-prank-codon.log --eta 'mkdir -p sequences/guidance-prank-codon/{/.}; guidance.pl --program GUIDANCE --seqFile {} --seqType nuc --msaProgram PRANK --MSA_Param "\+F \-codon" --outDir sequences/guidance-prank-codon/{/.} &> sequences/guidance-prank-codon/{/.}/parallel_guidance-prank-codon.output'
 ```
 
-2. `perl mask_msa_based_on_guidance_results.pl`. Analyze and parse the GUIDANCE results, and mask the alignments based on the scores.
+2. `mask_msa_based_on_guidance_results.pl`. Analyze and parse the GUIDANCE results, and mask the alignments based on the scores.
 
 ###### 3c. TCS - assessment and masking
 Run T-Coffee TCS to assess alignment stability by independently re-aligning all possible pairs of sequences. Note that we ran TCS on translated PRANK codon alignments.<br/>
@@ -179,29 +179,23 @@ find . -type f -name "*prank-codon.aln.translated.fa" | parallel --max-procs 4 -
 cd ../../
 ```
 
-3. `perl mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results, and mask the alignments based on the scores. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
+3. `mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results, and mask the alignments based on the scores. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
 
+###### 3d. Sort and translate alignments
+1. Sort sequences within alignment fasta files by species using `sort_sequences_by_taxon.pl`, so that all alignment files have the same ordering.
+```
+cd sequences/prank-codon-masked/
+find . -type f -name "*prank-codon-guidance-tcs-masked.aln.fa" | parallel --max-procs 4 --joblog ../../parallel_sort_alignments.log --eta --colsep '__cds' 'perl ../../sort_sequences_by_taxon.pl {1}__cds{2} {1}__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa'
+cd ../../
+```
 
-
-
-
-
-
-
-SORT ON SPECIES
-
-###### 3d. Translate alignments
-Translate masked cDNA alignments to facilitate quality control and visualization:
+2. Translate masked cDNA alignments to facilitate quality control and visualization:
 ```
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_translate-prank-codon-guidance-tcs-masked-species-sorted-alignments.log --eta 't_coffee -other_pg seq_reformat -in {} -action +translate -output fasta_aln > sequences/prank-codon-masked/{/.}.translated.fa'
 ```
 
 
-
-
-
-
-
+### 4. XXXX
 
 
 
