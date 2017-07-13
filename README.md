@@ -170,13 +170,13 @@ Run T-Coffee TCS to assess alignment stability by independently re-aligning all 
 ```bash
 mkdir -p sequences/tcs-prank-codon
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_translate-prank-codon-alignments.log --eta 't_coffee -other_pg seq_reformat -in {} -action +translate -output fasta_aln > sequences/tcs-prank-codon/{/.}.translated.fa'
-cd ../../
 ```
 
 2. Run TCS on the translated PRANK alignments:
 ```bash
 cd sequences/tcs-prank-codon
 find . -type f -name "*prank-codon.aln.translated.fa" | parallel --max-procs 4 --nice 10 --joblog ../../parallel_tcs-t-coffee.log --eta 't_coffee -infile {} -evaluate -method proba_pair -output score_ascii, score_html -quiet  > /dev/null'
+cd ../../
 ```
 
 3. `perl mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results, and mask the alignments based on the scores. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
@@ -184,12 +184,11 @@ find . -type f -name "*prank-codon.aln.translated.fa" | parallel --max-procs 4 -
 
 
 
-**********************
-TO TEST 3c1-3
-**********************
 
 
 
+
+SORT ON SPECIES
 
 ###### 3d. Translate alignments
 Translate masked cDNA alignments to facilitate quality control and visualization:

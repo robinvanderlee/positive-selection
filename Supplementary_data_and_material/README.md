@@ -96,3 +96,4 @@ Java	-Djava.ext.dirs=/Applications/Jalview/lib/
 
 ## GUIDANCE source code fix for running PRANK
 - `guidance_prank_fix.pdf`
+- `Guidance__prank_fix.pm`
