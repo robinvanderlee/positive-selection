@@ -213,24 +213,40 @@ perl sort_sequences_by_taxon.pl sequences/concatenated_alignment__9primates__cds
 perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
 ```
 
-4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny (`tre`). See the `.ctl` files for exact configurations: [Supplementary data and material](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
-Once under the F3X4 codon frequency parameter:
+4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny: [Supplementary data and material](Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre). See the `.ctl` files for exact configurations: [Supplementary data and material](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
+- Once under the F3X4 codon frequency parameter:
 ```
 mkdir codeml_M0_F3X4
 cd codeml_M0_F3X4
-../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M0_F3X4_tree.ctl
-codeml codeml_M0_tree_RvdL.ctl > codeml_M0_tree_RvdL.screen_output
+cp ../Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre .
+cp ../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M0_F3X4_tree.ctl .
+
+codeml codeml_M0_F3X4_tree.ctl > codeml_M0_F3X4_tree.screen_output
+cd ..
 ```
-And once under the F61 codon frequency parameter:
+
+- Once under the F61 codon frequency parameter:
+```
+mkdir codeml_M0_F61
+cd codeml_M0_F61
+cp ../Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre .
+cp ../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M0_F61_tree.ctl .
+
+codeml codeml_M0_F61_tree.ctl > codeml_M0_F61_tree.screen_output
+cd ..
+```
+
+**********************
+5. Store the phylogenetic trees outputted by codeml
+
+MOVE TREE FILES??
 M0_F3X4__unrooted_tree
+codeml_M0_tree__unrooted_tree__F3X4.tre
 
+M0_F61__unrooted_tree
+codeml_M0_tree__unrooted_tree__F61.tre
+**********************
 
-codeml_M0_F61_tree.ctl
-codeml_M0_F3X4_tree.ctl
-
-
-
- The M0 tree is also highly similar to a ML phylogenetic tree inferred from the same concatenated alignment using nucleotide rather than codon substitution evolutionary models (median branch length difference of a factor 0.98; Figure S1; RAxML v7.2.8a (38); -f a -m GTRCAT -N 100).
 
 
 
