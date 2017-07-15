@@ -213,7 +213,7 @@ perl sort_sequences_by_taxon.pl sequences/concatenated_alignment__9primates__cds
 perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
 ```
 
-4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny (`tre`). See the `.ctl` files for exact configurations: (Supplementary data and material)[Supplementary_data_and_material/Configuration_files_for_PAML_codeml/].<br/>
+4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny (`tre`). See the `.ctl` files for exact configurations: [Supplementary data and material](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
 Once under the F3X4 codon frequency parameter:
 ```
 mkdir codeml_M0_F3X4
