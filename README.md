@@ -135,7 +135,7 @@ Note that these steps also fetch the alignments underlying the Compara gene tree
 
 
 ### 3. Alignments
-Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters. Then assess the confidence in the alignments using two indepedent approaches. Low confidence scores of either method led us to remove entire alignments from our analysis or mask unreliable individual columns and codons.
+Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters. Then assess the confidence in the alignments using two indepedent approaches.
 
 #### 3a. PRANK codon-based multiple alignment
 This step collects all fasta files containing cDNA sequences for the species of interest, and for each of them runs the `PRANK` in codon mode (`-codon`) to align them. Jobs are executed and monitored in parallel using `GNU Parallel` (set number of cores with `--max-procs`).
@@ -161,7 +161,7 @@ prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG
 find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_guidance-prank-codon.log --eta 'mkdir -p sequences/guidance-prank-codon/{/.}; guidance.pl --program GUIDANCE --seqFile {} --seqType nuc --msaProgram PRANK --MSA_Param "\+F \-codon" --outDir sequences/guidance-prank-codon/{/.} &> sequences/guidance-prank-codon/{/.}/parallel_guidance-prank-codon.output'
 ```
 
-2. `mask_msa_based_on_guidance_results.pl`. Analyze and parse the GUIDANCE results, and mask the alignments based on the scores.
+2. `mask_msa_based_on_guidance_results.pl`. Analyze and parse the GUIDANCE results. Low confidence scores led us to remove entire alignments from our analysis or mask unreliable individual columns and codons.
 
 #### 3c. TCS - assessment and masking
 Run T-Coffee TCS to assess alignment stability by independently re-aligning all possible pairs of sequences. Note that we ran TCS on translated PRANK codon alignments.<br/>
@@ -179,7 +179,7 @@ find . -type f -name "*prank-codon.aln.translated.fa" | parallel --max-procs 4 -
 cd ../../
 ```
 
-3. `mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results, and mask the alignments based on the scores. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
+3. `mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results. Low confidence scores led us to remove entire alignments from our analysis or mask unreliable individual columns and codons. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
 
 #### 3d. Sort and translate alignments
 1. Sort sequences within alignment fasta files by species using `sort_sequences_by_taxon.pl`, so that all alignment files have the same ordering.
@@ -195,12 +195,54 @@ find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tc
 ```
 
 
-### 4. XXXX
+### 4. Evolutionary analyses
+Perform maximum likelihood (ML) dN/dS analysis to infer positive selection of genes and codons, using `codeml` in the PAML software package.
+
+#### 4a. Reference phylogenetic tree
+Construct a single phylogenetic tree with branch lengths for use in the ML analysis of all one-to-one otrholog cluster alignments.<br/>
+
+1. `perl concatenate_alignments.pl`. Concatenate all 11,096 masked alignments from Step 3 (i.e. the GUIDANCE- and TCS-masked codon-based alignments) into one large alignment. First make sure individual alignment files are sorted in the same way (see Step 3d).
+	
+2. Sort sequences within the concatenated alignment again by species:
+```
+perl sort_sequences_by_taxon.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked.aln.fa sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
+```
+
+3. Convert concatenated alignment from FASTA to a PHYLIP format that is compatible with PAML codeml. Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) sequences do not contain stop codons or non-canonical nucleotides, (iii) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
+```
+perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
+```
+
+4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny (`tre`). See the `.ctl` files for exact configurations: (Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
+Once under the F3X4 codon frequency parameter:
+```
+mkdir codeml_M0_F3X4
+cd codeml_M0_F3X4
+../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M0_F3X4_tree.ctl
+codeml codeml_M0_tree_RvdL.ctl > codeml_M0_tree_RvdL.screen_output
+```
+And once under the F61 codon frequency parameter:
+M0_F3X4__unrooted_tree
+
+
+codeml_M0_F61_tree.ctl
+codeml_M0_F3X4_tree.ctl
 
 
 
-Evolutionary analyses: reference phylogenetic tree
-Maximum likelihood (ML) dN/dS analysis to infer positive selection of genes and codons was performed with codeml of the PAML software package v4.8a (20)(Text S1). We used a single phylogenetic tree with branch lengths for the ML analysis of all alignments to limit the influence of gene-specific phylogenetic variability. To obtain this reference tree, we concatenated all 11,096 masked alignments into one large alignment and ran the codeml M0 model (i.e. fitting a single dN/dS for all sites; NSsites = 0, model = 0, method = 1, fix_blength = 0), provided with the well-supported topology of the primate phylogeny (30, 37). We took this approach for two main reasons: (i) to best reflect the overall evolutionary distance between the primate species (which influences codon transition probabilities in the ML calculations, Text S1), and (ii) to estimate branch lengths in units compatible with codon-based evolutionary analyses, i.e. the number of nucleotide substitutions per codon. For comparisons with other primate phylogenetic trees, the branch lengths of our codon-based tree were converted to nucleotide substitutions per site (i.e. nucleotide substitutions per codon divided by three). The codeml M0 model under the F61 or F3X4 codon frequency parameters resulted in virtually identical phylogenetic trees (median branch length difference of a factor 0.99) and dN/dS estimates (0.213 vs. 0.217; Figure S1, Supplementary Files). The M0 tree is also highly similar to a ML phylogenetic tree inferred from the same concatenated alignment using nucleotide rather than codon substitution evolutionary models (median branch length difference of a factor 0.98; Figure S1; RAxML v7.2.8a (38); -f a -m GTRCAT -N 100).
+ The M0 tree is also highly similar to a ML phylogenetic tree inferred from the same concatenated alignment using nucleotide rather than codon substitution evolutionary models (median branch length difference of a factor 0.98; Figure S1; RAxML v7.2.8a (38); -f a -m GTRCAT -N 100).
+
+
+
+
+
+#### 4b. Inference of positive selection
+Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all .phy files compatbility with the species names in the same phylogenetic tree supplied to codeml, (iii) sequences do not contain stop codons or non-canonical nucleotides, (iv) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
+
+
+
+
+
 
 Evolutionary analyses: inference of positive selection
 In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. These combinations consist of two sets of evolutionary models: M1a (neutral) vs. M2a (selection); M7 (beta) vs. M8 (beta&ω). And two codon frequency models: F61 (empirical estimates for the frequency of each codon); F3X4 (calculated from the average nucleotide frequencies at the three codon positions). I.e. we used combinations of the following codeml parameters: NSsites = 1 2 or NSsites = 7 8; CodonFreq = 2 or CodonFreq = 3; cleandata = 0, method = 0, fix_blength = 2. 2,992 (27%) genes showed significant evidence of apparent positive selection at the level of the whole alignment (Figure S2A).
