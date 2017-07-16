@@ -185,14 +185,14 @@ cd ../../
 
 #### 3d. Sort and translate alignments
 1. Sort sequences within alignment fasta files by species using `sort_sequences_by_taxon.pl`, so that all alignment files have the same ordering.
-```
+```bash
 cd sequences/prank-codon-masked/
 find . -type f -name "*prank-codon-guidance-tcs-masked.aln.fa" | parallel --max-procs 4 --joblog ../../parallel_sort_alignments.log --eta --colsep '__cds' 'perl ../../sort_sequences_by_taxon.pl {1}__cds{2} {1}__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa'
 cd ../../
 ```
 
 2. Translate masked cDNA alignments to facilitate quality control and visualization:
-```
+```bash
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_translate-prank-codon-guidance-tcs-masked-species-sorted-alignments.log --eta 't_coffee -other_pg seq_reformat -in {} -action +translate -output fasta_aln > sequences/prank-codon-masked/{/.}.translated.fa'
 ```
 
@@ -206,19 +206,19 @@ Construct a single phylogenetic tree with branch lengths for use in the ML analy
 1. `perl concatenate_alignments.pl`. Concatenate all 11,096 masked alignments from Step 3 (i.e. the GUIDANCE- and TCS-masked codon-based alignments) into one large alignment. First make sure individual alignment files are sorted in the same way (see Step 3d).
 	
 2. Sort sequences within the concatenated alignment again by species:
-```
+```bash
 perl sort_sequences_by_taxon.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked.aln.fa sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
 ```
 
 3. Convert concatenated alignment from FASTA to a PHYLIP format that is compatible with PAML codeml. Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) sequences do not contain stop codons or non-canonical nucleotides, (iii) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
-```
+```bash
 perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
 ```
 
 4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny: [Ensembl78__9primates__with_taxon_id__unrooted.tre](Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre). See the `.ctl` files for exact configurations: [Configuration_files_for_PAML_codeml](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
 
 - Once under the F3X4 codon frequency parameter:
-```
+```bash
 mkdir codeml_M0_F3X4
 cd codeml_M0_F3X4
 cp ../Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre .
@@ -229,7 +229,7 @@ cd ..
 ```
 
 - Once under the F61 codon frequency parameter:
-```
+```bash
 mkdir codeml_M0_F61
 cd codeml_M0_F61
 cp ../Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre .
@@ -244,7 +244,7 @@ cd ..
 
 #### 4b. Inference of positive selection
 1. Convert individual alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. Script (i) checks that sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatible with the species names in the phylogenetic tree supplied to codeml, (iii) checks that sequences do not contain stop codons or non-canonical nucleotides, (iv) converts undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
-```
+```bash
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_covert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
 ```
 
@@ -253,7 +253,7 @@ find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tc
 These steps prepare the directory structure, copy the template .ctl file and the reference phylogenetic tree to the proper directories, customize the codeml .ctl files for running the analysis on each of the 11,096 alignments, and eventually run the codeml program (from within `start_codeml_for_single_alignment.pl`).<br/>
 <br/>
 The following code shows how to run the `M7vM8_F61` parameter combination. For the paper, we used four combinations of the following codeml parameters: `NSsites = 1 2` or `NSsites = 7 8`; `CodonFreq = 2` or `CodonFreq = 3`.
-```
+```bash
 mkdir codeml_M7vM8_F61
 cp start_codeml_for_single_alignment.pl codeml_M7vM8_F61/
 cd codeml_M7vM8_F61
@@ -281,6 +281,8 @@ dir structure: codeml_M7vM8_F61
 ipv (previously)
 M7vM8_F61
 **********************
+```bash
+```
 
 
 In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. 
