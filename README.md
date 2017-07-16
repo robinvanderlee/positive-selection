@@ -155,7 +155,7 @@ prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG
 ```
 
 #### 3b. GUIDANCE - assessment and masking
-**NOTE: this step takes a lot of computation time.**<br/>
+**NOTE:** *this step takes a lot of computation time.*<br/>
 
 1. Run GUIDANCE to assess the sensitivity of the alignment to perturbations of the guide tree.<br/>
 *Note that this requires a bug fix in GUIDANCE (version 1.5 - 2014, August 7), see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
@@ -243,7 +243,7 @@ cd ..
 
 
 #### 4b. Inference of positive selection
-**NOTE: this step takes a lot of computation time.**<br/>
+**NOTE:** *this step takes a lot of computation time.*<br/>
 
 1. Convert individual alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatbility with the species names in the phylogenetic tree supplied to codeml, (iii) sequences do not contain stop codons or non-canonical nucleotides, (iv) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
 ```
