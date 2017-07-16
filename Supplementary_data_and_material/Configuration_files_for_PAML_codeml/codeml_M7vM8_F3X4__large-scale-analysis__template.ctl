@@ -1,5 +1,5 @@
 seqfile = <ALIGNMENT_FILE_REPLACE>													* sequence data file name
-treefile = ../../../M0_F3X4__unrooted_tree/codeml_M0_tree__unrooted_tree__F3X4.tre 	* tree structure file name
+treefile = ../../codeml_M0_tree__unrooted_tree__F3X4.tre 							* tree structure file name
 outfile = <OUTFILE_REPLACE>.codeml_outfile											* main result file name
 
 noisy = 9 							* 0,1,2,3,9: how much rubbish on the screen

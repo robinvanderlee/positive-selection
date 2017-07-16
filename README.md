@@ -250,30 +250,26 @@ cd ..
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_covert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
 ```
 
-2. 
-- RUN CODEML: prepare directories, ctl file, and input tree, run codeml program
-
+2. Run codeml. These steps prepare the directory structure, copy the template .ctl file and the reference phylogenetic tree to the proper directories, customize the codeml .ctl files for running the analysis on each of the 11,096 alignments, and eventually run the codeml program (from within `start_codeml_for_single_alignment.pl`).<br/>
+<br/>
+The following code shows how to run the `M7vM8_F61` parameter combination. For the paper, we used four combinations of the following codeml parameters: `NSsites = 1 2` or `NSsites = 7 8`; `CodonFreq = 2` or `CodonFreq = 3`.
 ```
 mkdir codeml_M7vM8_F61
 cp start_codeml_for_single_alignment.pl codeml_M7vM8_F61/
 cd codeml_M7vM8_F61
 cp ../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M7vM8_F61__large-scale-analysis__template.ctl .
+cp ../Supplementary_data_and_material/Phylogenetic_Trees/codeml_M0_tree__unrooted_tree__F61.tre .
 
-find ../sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.phy" | parallel --max-procs 4 --nice 10 --joblog parallel_codeml__M7vM8_F61.log --eta 'perl start_codeml_for_single_alignment.pl {}'
+find ../sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.phy" | parallel --max-procs 4 --nice 10 --joblog parallel_codeml__M7vM8_F61.log --eta 'perl start_codeml_for_single_alignment.pl {} codeml_M7vM8_F61__large-scale-analysis__template.ctl'
 cd ..
 ```
 
-
-********************
-Example is for M7vM8_F61, find and replace;
-M7vM8_F61
-M7vM8_F3X4
-M1avM2a_F61
-M1avM2a_F3X4
-
-Replace this line with others
-my $template_ctl_file = "codeml_M7vM8_F61__large-scale-analysis__template.ctl";
-********************
+To run all four parameter combinations, replace all occurences of:
+- `M7vM8_F61`
+by:
+- M7vM8_F3X4
+- M1avM2a_F61
+- M1avM2a_F3X4
 
 
 
@@ -282,10 +278,9 @@ my $template_ctl_file = "codeml_M7vM8_F61__large-scale-analysis__template.ctl";
 
 
 
+**********************
 
-Evolutionary analyses: inference of positive selection
-In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. These combinations consist of two sets of evolutionary models: M1a (neutral) vs. M2a (selection); M7 (beta) vs. M8 (beta&ω). And two codon frequency models: F61 (empirical estimates for the frequency of each codon); F3X4 (calculated from the average nucleotide frequencies at the three codon positions). I.e. we used combinations of the following codeml parameters: NSsites = 1 2 or NSsites = 7 8; CodonFreq = 2 or CodonFreq = 3; cleandata = 0, method = 0, fix_blength = 2. 2,992 (27%) genes showed significant evidence of apparent positive selection at the level of the whole alignment (Figure S2A).
-
+In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. 
 Second, for the significant aPSG we retrieved from the site-specific codeml ML analyses (step one, above) the Bayesian posterior probabilities, which indicate the individual codons that may have evolved under positive selection (Text S1)(39). We included apparent Positively Selected Residues (aPSR) if their codons were assigned high posteriors under all four ML parameter combinations (Pposterior (ω > 1)   > 0.99). 416 aPSG contain at least one significant aPSR (1405 in total; Figure S2B).
 
 Quality control
