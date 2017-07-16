@@ -155,6 +155,8 @@ prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG
 ```
 
 #### 3b. GUIDANCE - assessment and masking
+**NOTE: this step takes a lot of computation time.**<br/>
+
 1. Run GUIDANCE to assess the sensitivity of the alignment to perturbations of the guide tree.<br/>
 *Note that this requires a bug fix in GUIDANCE (version 1.5 - 2014, August 7), see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
 ```bash
@@ -214,6 +216,7 @@ perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primat
 ```
 
 4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny: [Supplementary data and material](Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre). See the `.ctl` files for exact configurations: [Supplementary data and material](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
+
 - Once under the F3X4 codon frequency parameter:
 ```
 mkdir codeml_M0_F3X4
@@ -236,24 +239,44 @@ codeml codeml_M0_F61_tree.ctl > codeml_M0_F61_tree.screen_output
 cd ..
 ```
 
-**********************
-5. Store the phylogenetic trees outputted by codeml
-
-MOVE TREE FILES??
-M0_F3X4__unrooted_tree
-codeml_M0_tree__unrooted_tree__F3X4.tre
-
-M0_F61__unrooted_tree
-codeml_M0_tree__unrooted_tree__F61.tre
-**********************
-
-
-
-
+5. Store the phylogenetic trees outputted by codeml. Ours are [codeml_M0_tree__unrooted_tree__F3X4.tre](Supplementary_data_and_material/Phylogenetic_Trees/codeml_M0_tree__unrooted_tree__F3X4.tre) and [codeml_M0_tree__unrooted_tree__F61.tre](Supplementary_data_and_material/Phylogenetic_Trees/codeml_M0_tree__unrooted_tree__F61.tre).
 
 
 #### 4b. Inference of positive selection
-Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all .phy files compatbility with the species names in the same phylogenetic tree supplied to codeml, (iii) sequences do not contain stop codons or non-canonical nucleotides, (iv) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
+**NOTE: this step takes a lot of computation time.**<br/>
+
+1. Convert individual alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatbility with the species names in the phylogenetic tree supplied to codeml, (iii) sequences do not contain stop codons or non-canonical nucleotides, (iv) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
+```
+find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_covert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
+```
+
+2. 
+- RUN CODEML: prepare directories, ctl file, and input tree, run codeml program
+
+```
+mkdir codeml_M7vM8_F61
+cp start_codeml_for_single_alignment.pl codeml_M7vM8_F61/
+cd codeml_M7vM8_F61
+cp ../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M7vM8_F61__large-scale-analysis__template.ctl .
+
+find ../sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.phy" | parallel --max-procs 4 --nice 10 --joblog parallel_codeml__M7vM8_F61.log --eta 'perl start_codeml_for_single_alignment.pl {}'
+cd ..
+```
+
+
+********************
+Example is for M7vM8_F61, find and replace;
+M7vM8_F61
+M7vM8_F3X4
+M1avM2a_F61
+M1avM2a_F3X4
+
+Replace this line with others
+my $template_ctl_file = "codeml_M7vM8_F61__large-scale-analysis__template.ctl";
+********************
+
+
+
 
 
 
