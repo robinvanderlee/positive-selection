@@ -243,15 +243,14 @@ cd ..
 
 
 #### 4b. Inference of positive selection
-**NOTE:** *this step takes a lot of computation time.*<br/>
-
 1. Convert individual alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatbility with the species names in the phylogenetic tree supplied to codeml, (iii) sequences do not contain stop codons or non-canonical nucleotides, (iv) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
 ```
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_covert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
 ```
 
-2. Run codeml. These steps prepare the directory structure, copy the template .ctl file and the reference phylogenetic tree to the proper directories, customize the codeml .ctl files for running the analysis on each of the 11,096 alignments, and eventually run the codeml program (from within `start_codeml_for_single_alignment.pl`).<br/>
-<br/>
+2. Run codeml. **NOTE:** *this step takes a lot of computation time.*<br/>
+
+These steps prepare the directory structure, copy the template .ctl file and the reference phylogenetic tree to the proper directories, customize the codeml .ctl files for running the analysis on each of the 11,096 alignments, and eventually run the codeml program (from within `start_codeml_for_single_alignment.pl`).<br/>
 The following code shows how to run the `M7vM8_F61` parameter combination. For the paper, we used four combinations of the following codeml parameters: `NSsites = 1 2` or `NSsites = 7 8`; `CodonFreq = 2` or `CodonFreq = 3`.
 ```
 mkdir codeml_M7vM8_F61
