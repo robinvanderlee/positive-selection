@@ -15,7 +15,7 @@ Please consider citing the paper if you found this resource useful.
 
 ## Issues & Contact
 
-Note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of steps with extensive manual quality control between them. It will therefore not be straightforward to run all steps smoothly in one go. Feel free to contact me if you run into any issue.
+Note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of individual steps with extensive manual quality control between them. It will therefore not be straightforward to run all steps smoothly in one go. Feel free to contact me if you run into any issue.
 
 > **robinvanderlee AT gmail DOT com**<br/><br/>
 > [Google Scholar](https://scholar.google.co.uk/citations?user=ISYCcUUAAAAJ)<br/>
@@ -35,14 +35,14 @@ and
 
 ## Requirements
 
-Scripts depend on various programs and modules to run. Refer to the paper for which versions were used.
-*Make sure all of these programs are in your [`$PATH`](http://www.linfo.org/path_env_var.html)*<br/>
+Our scripts depend on various programs and modules to run. Refer to the paper for which versions were used.
+*Make sure all of these programs are in your [`$PATH`](http://www.linfo.org/path_env_var.html)*.<br/>
 
 #### Perl
 - Perl 5: https://www.perl.org/
 - Install various modules using `cpan` or `cpanm`
 	- `cpanm DBI`
-	- `cpanm DBD::mysql`  (requires a working mysql installation, https://www.mysql.com/)
+	- `cpanm DBD::mysql`  (requires a working MySQL installation, https://www.mysql.com/)
 - Download the various helper scripts that are also part of this GitHub repository
 	- `functions.pl`
 	- Scripts in `Ensembl_API_subroutines`
@@ -102,6 +102,7 @@ Analyses presented in the paper are based on Ensembl release 78, December 2014 (
 
 ### 1. One-to-one orthologs
 Obtain one-to-one ortholog clusters for nine primates with high-coverage whole-genome sequences. These scripts can be edited to obtain orthology clusters for (i) a different set of species than the ones we use here, and (ii) different homology relationships than the one-to-one filter we use.<br/>
+<br/>
 Two methods, same result:
 
 #### 1a. Ensembl API method
@@ -135,18 +136,16 @@ Note that these steps also fetch the alignments underlying the Compara gene tree
 
 
 ### 3. Alignments
-Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters. Then assess the confidence in the alignments using two indepedent approaches.
+Produce codon-based nucleotide sequence alignments for all the one-to-one ortholog clusters. Then assess the confidence in the alignments using two independent approaches.
 
 #### 3a. PRANK codon-based multiple alignment
-This step collects all fasta files containing cDNA sequences for the species of interest, and for each of them runs the `PRANK` in codon mode (`-codon`) to align them. Jobs are executed and monitored in parallel using `GNU Parallel` (set number of cores with `--max-procs`).
+This step finds the fasta files containing cDNA sequences for the species of interest (obtained in Step 2), and for each of them runs the `PRANK` in codon mode (`-codon`) to align them. Jobs are executed and monitored in parallel using `GNU Parallel` (set number of cores with `--max-procs`).
 ```bash
 find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --joblog parallel_prank-codon.log --eta 'prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet > /dev/null'
 ```
 This effectively execute the following commands:
 ```bash
 find sequences/ -type f -name "*__cds.fa" | parallel 'echo prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet'
-```
-```bash
 ...
 prank +F -codon -d=sequences//cds/ENSG00000274211__cds.fa -o=sequences//cds/ENSG00000274211__cds.prank-codon.aln.fa -quiet
 prank +F -codon -d=sequences//cds/ENSG00000274523__cds.fa -o=sequences//cds/ENSG00000274523__cds.prank-codon.aln.fa -quiet
@@ -154,7 +153,7 @@ prank +F -codon -d=sequences//cds/ENSG00000019549__cds.fa -o=sequences//cds/ENSG
 ...
 ```
 
-#### 3b. GUIDANCE - assessment and masking
+#### 3b. GUIDANCE assessment and masking
 **NOTE:** *this step takes a lot of computation time.*<br/>
 
 1. Run GUIDANCE to assess the sensitivity of the alignment to perturbations of the guide tree.<br/>
@@ -165,10 +164,10 @@ find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --nice 10 --j
 
 2. `mask_msa_based_on_guidance_results.pl`. Analyze and parse the GUIDANCE results. Low confidence scores led us to remove entire alignments from our analysis or mask unreliable individual columns and codons.
 
-#### 3c. TCS - assessment and masking
+#### 3c. TCS assessment and masking
 Run T-Coffee TCS to assess alignment stability by independently re-aligning all possible pairs of sequences. Note that we ran TCS on translated PRANK codon alignments.<br/>
 
-1. Translate the PRANK alignments to protein. Note that we use the PRANK alignments generated through GUIDANCE (Step 3b) to ensure we are masking the same alignments with both GUIDANCE and TCS!
+1. Translate the PRANK cDNA alignments to protein alignments. Note that we use the PRANK alignments generated through GUIDANCE (Step 3b) to ensure we are masking the same alignments with both GUIDANCE and TCS!
 ```bash
 mkdir -p sequences/tcs-prank-codon
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_translate-prank-codon-alignments.log --eta 't_coffee -other_pg seq_reformat -in {} -action +translate -output fasta_aln > sequences/tcs-prank-codon/{/.}.translated.fa'
@@ -181,10 +180,10 @@ find . -type f -name "*prank-codon.aln.translated.fa" | parallel --max-procs 4 -
 cd ../../
 ```
 
-3. `mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results. Low confidence scores led us to remove entire alignments from our analysis or mask unreliable individual columns and codons. Note that we mask the original PRANK codon-based alignments based on the TCS results on the translated alignment!
+3. `mask_msa_based_on_tcs_results.pl`. Analyze and parse the TCS results. Low confidence scores led us to remove entire alignments from our analysis or mask unreliable individual columns and codons. Note that we mask the original PRANK codon-based cDNA alignments based on the TCS results on the translated alignment!
 
 #### 3d. Sort and translate alignments
-1. Sort sequences within alignment fasta files by species using `sort_sequences_by_taxon.pl`, so that all alignment files have the same ordering.
+1. Sort sequences within alignment fasta files by species using `sort_sequences_by_taxon.pl`, so that all alignment files have the same sequence ordering.
 ```bash
 cd sequences/prank-codon-masked/
 find . -type f -name "*prank-codon-guidance-tcs-masked.aln.fa" | parallel --max-procs 4 --joblog ../../parallel_sort_alignments.log --eta --colsep '__cds' 'perl ../../sort_sequences_by_taxon.pl {1}__cds{2} {1}__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa'
@@ -198,26 +197,26 @@ find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tc
 
 
 ### 4. Evolutionary analyses
-Perform maximum likelihood (ML) dN/dS analysis to infer positive selection of genes and codons, using `codeml` in the PAML software package.
+Perform maximum likelihood (ML) dN/dS analysis to infer positive selection of genes and codons. This uses `codeml` from the PAML software package.
 
 #### 4a. Reference phylogenetic tree
-Construct a single phylogenetic tree with branch lengths for use in the ML analysis of all one-to-one otrholog cluster alignments.<br/>
+Construct a single phylogenetic tree with branch lengths for use in the `codeml` analyses of all individual one-to-one ortholog cluster alignments.<br/>
 
-1. `perl concatenate_alignments.pl`. Concatenate all 11,096 masked alignments from Step 3 (i.e. the GUIDANCE- and TCS-masked codon-based alignments) into one large alignment. First make sure individual alignment files are sorted in the same way (see Step 3d).
+1. `perl concatenate_alignments.pl`. Concatenate all 11,096 masked alignments from Step 3 (i.e. the GUIDANCE- and TCS-masked codon-based cDNA alignments) into one large alignment. First make sure individual alignment files are all sorted in the same way (done in Step 3d).
 	
 2. Sort sequences within the concatenated alignment again by species:
 ```bash
 perl sort_sequences_by_taxon.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked.aln.fa sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
 ```
 
-3. Convert concatenated alignment from FASTA to a PHYLIP format that is compatible with PAML codeml. Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) sequences do not contain stop codons or non-canonical nucleotides, (iii) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
+3. Convert concatenated alignment from FASTA to a PHYLIP format that is compatible with PAML codeml. This script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) sequences do not contain stop codons or non-canonical nucleotides, (iii) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
 ```bash
 perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
 ```
 
 4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny: [Ensembl78__9primates__with_taxon_id__unrooted.tre](Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre). See the `.ctl` files for exact configurations: [Configuration_files_for_PAML_codeml](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
 
-- Once under the F3X4 codon frequency parameter:
+- Calculate reference tree under the F3X4 codon frequency parameter:
 ```bash
 mkdir codeml_M0_F3X4
 cd codeml_M0_F3X4
@@ -228,7 +227,7 @@ codeml codeml_M0_F3X4_tree.ctl > codeml_M0_F3X4_tree.screen_output
 cd ..
 ```
 
-- Once under the F61 codon frequency parameter:
+- Calculate reference tree under the F61 codon frequency parameter:
 ```bash
 mkdir codeml_M0_F61
 cd codeml_M0_F61
@@ -242,17 +241,17 @@ cd ..
 5. Store the phylogenetic trees outputted by codeml. Ours are [codeml_M0_tree__unrooted_tree__F3X4.tre](Supplementary_data_and_material/Phylogenetic_Trees/codeml_M0_tree__unrooted_tree__F3X4.tre) and [codeml_M0_tree__unrooted_tree__F61.tre](Supplementary_data_and_material/Phylogenetic_Trees/codeml_M0_tree__unrooted_tree__F61.tre).
 
 
-#### 4b. Inference of positive selection
-1. Convert individual alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. Script (i) checks that sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatible with the species names in the phylogenetic tree supplied to codeml, (iii) checks that sequences do not contain stop codons or non-canonical nucleotides, (iv) converts undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
+#### 4b. Inference of positive selection using PAML codeml
+1. Convert individual codon-based cDNA alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. This script (i) checks that sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatible with the species names in the phylogenetic tree supplied to codeml, (iii) checks that sequences do not contain stop codons or non-canonical nucleotides, (iv) converts undetermined and masked codons [nN] to the codeml ambiguity character `?`.
 ```bash
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_covert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
 ```
 
 2. Run codeml. **NOTE:** *this step takes a lot of computation time.*<br/>
 
-These steps prepare the directory structure, copy the template .ctl file and the reference phylogenetic tree to the proper directories, customize the codeml .ctl files for running the analysis on each of the 11,096 alignments, and eventually run the codeml program (from within `start_codeml_for_single_alignment.pl`).<br/>
+These steps (i) prepare the directory structure, (ii) copy the template codeml .ctl file and the reference phylogenetic tree to the proper directories, (iii) customize the .ctl files for running the analysis on each of the 11,096 alignments, and eventually (iv) run the codeml program (from within `start_codeml_for_single_alignment.pl`).<br/>
 <br/>
-The following code shows how to run the `M7vM8_F61` parameter combination. For the paper, we used four combinations of the following codeml parameters: `NSsites = 1 2` or `NSsites = 7 8`; `CodonFreq = 2` or `CodonFreq = 3`.
+The following code shows how to run the `M7vM8_F61` parameter combination. For the paper, we used four combinations of the following codeml .ctl file parameters: `NSsites = 1 2` or `NSsites = 7 8`; `CodonFreq = 2` or `CodonFreq = 3`.
 ```bash
 mkdir codeml_M7vM8_F61
 cp start_codeml_for_single_alignment.pl codeml_M7vM8_F61/
@@ -265,9 +264,9 @@ cd ..
 ```
 
 To run the other three parameter combinations:
-- Replace `M7vM8_F61` by `M1avM2a_F61`
-- Replace `M7vM8_F61` by `M7vM8_F3X4` and `F61.tre` by `F3X4.tre`
-- Replace `M7vM8_F61` by `M1avM2a_F3X4` and `F61.tre` by `F3X4.tre`
+- In the code above, replace `M7vM8_F61` by `M1avM2a_F61`
+- In the code above, replace `M7vM8_F61` by `M7vM8_F3X4` and `codeml_M0_tree__unrooted_tree__F61.tre` by `codeml_M0_tree__unrooted_tree__F3X4.tre`
+- In the code above, replace `M7vM8_F61` by `M1avM2a_F3X4` and `codeml_M0_tree__unrooted_tree__F61.tre` by `codeml_M0_tree__unrooted_tree__F3X4.tre`
 
 
 
