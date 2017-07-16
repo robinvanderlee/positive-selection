@@ -15,7 +15,7 @@ Please consider citing the paper if you found this resource useful.
 
 ## Issues & Contact
 
-Note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of steps with extensive manual quality control between them. It will therefore not be straightforward to run all steps smoothly in one go. Feel free to contact me if you run into any issue with individual steps.
+Note that these scripts were not designed to function as a fully-automated pipeline, but rather as a series of steps with extensive manual quality control between them. It will therefore not be straightforward to run all steps smoothly in one go. Feel free to contact me if you run into any issue.
 
 > **robinvanderlee AT gmail DOT com**<br/><br/>
 > [Google Scholar](https://scholar.google.co.uk/citations?user=ISYCcUUAAAAJ)<br/>
@@ -215,7 +215,7 @@ perl sort_sequences_by_taxon.pl sequences/concatenated_alignment__9primates__cds
 perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primates__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa
 ```
 
-4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny: [Supplementary data and material](Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre). See the `.ctl` files for exact configurations: [Supplementary data and material](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
+4. Run the codeml M0 model on the concatenated alignment. This fits a single dN/dS to all sites (`NSsites = 0, model = 0, method = 1, fix_blength = 0`). We provided codeml with the well-supported topology of the primate phylogeny: [Ensembl78__9primates__with_taxon_id__unrooted.tre](Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre). See the `.ctl` files for exact configurations: [Configuration_files_for_PAML_codeml](Supplementary_data_and_material/Configuration_files_for_PAML_codeml/).<br/>
 
 - Once under the F3X4 codon frequency parameter:
 ```
@@ -243,7 +243,7 @@ cd ..
 
 
 #### 4b. Inference of positive selection
-1. Convert individual alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. Script checks that (i) sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatbility with the species names in the phylogenetic tree supplied to codeml, (iii) sequences do not contain stop codons or non-canonical nucleotides, (iv) undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
+1. Convert individual alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. Script (i) checks that sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatible with the species names in the phylogenetic tree supplied to codeml, (iii) checks that sequences do not contain stop codons or non-canonical nucleotides, (iv) converts undetermined and masked codons [nN] are converted to the codeml ambiguity character `?`.
 ```
 find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_covert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
 ```
@@ -264,27 +264,38 @@ find ../sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance
 cd ..
 ```
 
-To run all four parameter combinations, replace all occurences of:
-- `M7vM8_F61`<br/>
-by:
-- `M7vM8_F3X4`
-- `M1avM2a_F61`
-- `M1avM2a_F3X4`
-
-
-
-
+To run the other three parameter combinations:
+- Replace `M7vM8_F61` by `M1avM2a_F61`
+- Replace `M7vM8_F61` by `M7vM8_F3X4` and `F61.tre` by `F3X4.tre`
+- Replace `M7vM8_F61` by `M1avM2a_F3X4` and `F61.tre` by `F3X4.tre`
 
 
 
 
 **********************
+3. XXXXXXXXX
+PARSE and gather codeml resutls
+**********************
+!!!!!!!
+dir structure: codeml_M7vM8_F61
+ipv (previously)
+M7vM8_F61
+**********************
+
 
 In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. 
 Second, for the significant aPSG we retrieved from the site-specific codeml ML analyses (step one, above) the Bayesian posterior probabilities, which indicate the individual codons that may have evolved under positive selection (Text S1)(39). We included apparent Positively Selected Residues (aPSR) if their codons were assigned high posteriors under all four ML parameter combinations (Pposterior (ω > 1)   > 0.99). 416 aPSG contain at least one significant aPSR (1405 in total; Figure S2B).
 
+
+
+
+###5????
+
 Quality control
 We subjected each inferred aPSR and aPSG to visual inspection (Table S3). In this way we identified several indicators for positive selection artefacts that we then used for their automated detection in the complete set. First, we obtained the gene trees for our individual masked alignments using RAxML (38)(-f a -m GTRGAMMAI -N 100). Type-I [orthology] and -II [transcript definitions] artefacts tend to lead to gene trees with (i) a long-branched clade consisting of the set of sequences that are distinct from the others (e.g. paralogs, alternative exons), and (ii) a topology that is not congruent with the well-supported species phylogeny (Figure S3). We filtered out likely false positives by selecting gene trees with an extreme longest/average branch length ratio. Second, to assess the distribution of PSR across exons, we mapped Ensembl exon coordinates for human transcripts to the human protein sequences. Type-II [transcript definitions] and -III [termini] artefacts could often be filtered out by a high concentration of aPSR located to a single exon (Supplementary Files).
+
+
+
 
 GC-biased gene conversion (gBGC)
 The effects of gBGC seem specifically correlated to regions of high meiotic recombination in males rather than females (40). We calculated genomic overlaps of PSG and non-PSG with male (8.2% of PSG, 7.7% of non-PSG) and female (6.7% of PSG, 8.1% of non-PSG) recombination hotspots in human, which we obtained from the family-based deCODE maps (41) via the UCSC genome browser (42). Sex-averaged recombination hotspots estimated from linkage disequilibrium patterns were obtained from HapMap Release 22 (43)(43% of PSG, 39% of non-PSG). Human genomic regions under the influence of gBGC were predicted by phastBias (44)(9.1% of PSG, 11.4% of non-PSG).
