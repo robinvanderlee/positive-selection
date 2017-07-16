@@ -265,11 +265,11 @@ cd ..
 ```
 
 To run all four parameter combinations, replace all occurences of:
-- `M7vM8_F61`
+- `M7vM8_F61`<br/>
 by:
-- M7vM8_F3X4
-- M1avM2a_F61
-- M1avM2a_F3X4
+- `M7vM8_F3X4`
+- `M1avM2a_F61`
+- `M1avM2a_F3X4`
 
 
 
