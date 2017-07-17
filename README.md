@@ -282,8 +282,35 @@ find codeml_results_parsed/ -name "*residues_codeml_results" | sort | xargs cat 
 find codeml_results_parsed/ -name "*alignment_codeml_results" | sort | xargs cat > M7vM8_F61__analysis_11096_genes.alignment_codeml_results
 ```
 
+Again, to run the other three parameter combinations:
+- In the code above, replace `M7vM8_F61` by `M1avM2a_F61`
+- In the code above, replace `M7vM8_F61` by `M7vM8_F3X4`
+- In the code above, replace `M7vM8_F61` by `M1avM2a_F3X4`
+
+#### 4d. Statistical analysis and intersection of the different parameters combinations
+
+Analyses in R
+[][]R script
+
+Combine bases files into final tables
+
+And then QQ, refer to paper.
+	and the supp jalview files etc.
 
 
+In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. 
+Second, for the significant aPSG we retrieved from the site-specific codeml ML analyses (step one, above) the Bayesian posterior probabilities, which indicate the individual codons that may have evolved under positive selection (Text S1)(39). We included apparent Positively Selected Residues (aPSR) if their codons were assigned high posteriors under all four ML parameter combinations (Pposterior (ω > 1)   > 0.99). 416 aPSG contain at least one significant aPSR (1405 in total; Figure S2B).
+
+
+
+
+
+
+### Checks
+Make sure you check the `GNU Parallel` logs to get an indication that steps finished OK. Though unfortunately not all programs exit with an error message if they fail, so our scripts also extensively check for whether the various steps ran correctly in other ways.
+```bash
+perl parse_parallel_logs.pl all
+```
 
 
 
@@ -297,49 +324,14 @@ M7vM8_F61
 
 
 
-
-
-
-
-
-
-
-
-
-
-In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. 
-Second, for the significant aPSG we retrieved from the site-specific codeml ML analyses (step one, above) the Bayesian posterior probabilities, which indicate the individual codons that may have evolved under positive selection (Text S1)(39). We included apparent Positively Selected Residues (aPSR) if their codons were assigned high posteriors under all four ML parameter combinations (Pposterior (ω > 1)   > 0.99). 416 aPSG contain at least one significant aPSR (1405 in total; Figure S2B).
-
-
-
-
 ###5????
 
 Quality control
 We subjected each inferred aPSR and aPSG to visual inspection (Table S3). In this way we identified several indicators for positive selection artefacts that we then used for their automated detection in the complete set. First, we obtained the gene trees for our individual masked alignments using RAxML (38)(-f a -m GTRGAMMAI -N 100). Type-I [orthology] and -II [transcript definitions] artefacts tend to lead to gene trees with (i) a long-branched clade consisting of the set of sequences that are distinct from the others (e.g. paralogs, alternative exons), and (ii) a topology that is not congruent with the well-supported species phylogeny (Figure S3). We filtered out likely false positives by selecting gene trees with an extreme longest/average branch length ratio. Second, to assess the distribution of PSR across exons, we mapped Ensembl exon coordinates for human transcripts to the human protein sequences. Type-II [transcript definitions] and -III [termini] artefacts could often be filtered out by a high concentration of aPSR located to a single exon (Supplementary Files).
 
 
-
-
-GC-biased gene conversion (gBGC)
-The effects of gBGC seem specifically correlated to regions of high meiotic recombination in males rather than females (40). We calculated genomic overlaps of PSG and non-PSG with male (8.2% of PSG, 7.7% of non-PSG) and female (6.7% of PSG, 8.1% of non-PSG) recombination hotspots in human, which we obtained from the family-based deCODE maps (41) via the UCSC genome browser (42). Sex-averaged recombination hotspots estimated from linkage disequilibrium patterns were obtained from HapMap Release 22 (43)(43% of PSG, 39% of non-PSG). Human genomic regions under the influence of gBGC were predicted by phastBias (44)(9.1% of PSG, 11.4% of non-PSG).
-
-
-
-Some useful commands to monitor progress:
-```
-XX
-```
-find sequences/cds/ | grep prank | wc -l
-tail -f parallel_guidance-prank-codon.log
-find sequences/guidance-prank-codon/ -type f | grep PRANK.std$ | xargs cat | grep Writing -A 1
-
-
-CHECK parallel logs! ...*pl
-to get an indication if things ran OK (though unfortunately not all programs exit with an error message if they , so our scripts also extensively check for whether all the various steps ran correctly in other ways)
-
-
-
+RAxML gene trees
+find ../sequences/prank-codon-masked/ -type f -name "*prank-codon-guidance-tcs-masked-species-sorted.aln.phy" | parallel --max-procs 36 --nice 5 --joblog parallel_gene-trees-prank-codon-guidance-tcs-masked-species-sorted-alignments.log --eta 'perl get_raxml_gene_tree.pl {}'
 
 
 
