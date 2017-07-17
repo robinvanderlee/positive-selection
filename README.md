@@ -268,16 +268,15 @@ To run the other three parameter combinations:
 - In the code above, replace `M7vM8_F61` by `M7vM8_F3X4` and `codeml_M0_tree__unrooted_tree__F61.tre` by `codeml_M0_tree__unrooted_tree__F3X4.tre`
 - In the code above, replace `M7vM8_F61` by `M1avM2a_F3X4` and `codeml_M0_tree__unrooted_tree__F61.tre` by `codeml_M0_tree__unrooted_tree__F3X4.tre`
 
-3. Gather and parse the codeml results<br/>
-
-First, `process_single_run_codeml_results.pl` processess the results for the individual analyses: (i) extensive checks to see if codeml ran correctly, (ii) copies relevant result files, (iii) parses the relevant results from the various mysterious `codeml` output files, (iv) combines everything into results tables.
+#### 4c. Gather and parse the codeml results
+1. First, `process_single_run_codeml_results.pl` processess the results for the individual analyses: (i) extensive checks to see if codeml ran correctly, (ii) copies relevant result files, (iii) parses the relevant results from the various mysterious `codeml` output files, (iv) combines everything into results tables.
 ```bash
 cd codeml_M7vM8_F61/
 mkdir codeml_results_parsed
 find codeml_results/ -type d | grep ENSG | parallel --max-procs 4 --joblog parallel_parse_codeml_results__M7vM8_F61.log 'perl ../process_single_run_codeml_results.pl {}' &> parallel_parse_codeml_results__M7vM8_F61.output
 ```
 
-Then the results of the individual analyses are collected into two big tables:
+2. Then the results of the individual analyses are collected into two big tables:
 ```bash
 find codeml_results_parsed/ -name "*residues_codeml_results" | sort | xargs cat > M7vM8_F61__analysis_11096_genes.residues_codeml_results
 find codeml_results_parsed/ -name "*alignment_codeml_results" | sort | xargs cat > M7vM8_F61__analysis_11096_genes.alignment_codeml_results
