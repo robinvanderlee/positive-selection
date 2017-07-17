@@ -219,7 +219,7 @@ perl convert_fasta_to_codeml_phylip.pl sequences/concatenated_alignment__9primat
 - Calculate reference tree under the F3X4 codon frequency parameter:
 ```bash
 mkdir codeml_M0_F3X4
-cd codeml_M0_F3X4
+cd codeml_M0_F3X4/
 cp ../Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre .
 cp ../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M0_F3X4_tree.ctl .
 
@@ -230,7 +230,7 @@ cd ..
 - Calculate reference tree under the F61 codon frequency parameter:
 ```bash
 mkdir codeml_M0_F61
-cd codeml_M0_F61
+cd codeml_M0_F61/
 cp ../Supplementary_data_and_material/Phylogenetic_Trees/Ensembl78__9primates__with_taxon_id__unrooted.tre .
 cp ../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M0_F61_tree.ctl .
 
@@ -244,7 +244,7 @@ cd ..
 #### 4b. Inference of positive selection using PAML codeml
 1. Convert individual codon-based cDNA alignments from FASTA to a PHYLIP format that is compatible with PAML codeml. This script (i) checks that sequence names do not contain characters that cannot be handled by codeml, (ii) removes gene identifiers from the sequence IDs to make all `.phy` files compatible with the species names in the phylogenetic tree supplied to codeml, (iii) checks that sequences do not contain stop codons or non-canonical nucleotides, (iv) converts undetermined and masked codons [nN] to the codeml ambiguity character `?`.
 ```bash
-find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_covert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
+find sequences/prank-codon-masked/ -type f -name "*__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.fa" | parallel --max-procs 4 --nice 10 --joblog parallel_convert-to-phylip-prank-codon-guidance-tcs-masked-species-sorted.log --eta 'perl convert_fasta_to_codeml_phylip.pl {}'
 ```
 
 2. Run codeml. **NOTE:** *this step takes a lot of computation time.*<br/>
@@ -255,7 +255,7 @@ The following code shows how to run the `M7vM8_F61` parameter combination. For t
 ```bash
 mkdir codeml_M7vM8_F61
 cp start_codeml_for_single_alignment.pl codeml_M7vM8_F61/
-cd codeml_M7vM8_F61
+cd codeml_M7vM8_F61/
 cp ../Supplementary_data_and_material/Configuration_files_for_PAML_codeml/codeml_M7vM8_F61__large-scale-analysis__template.ctl .
 cp ../Supplementary_data_and_material/Phylogenetic_Trees/codeml_M0_tree__unrooted_tree__F61.tre .
 
@@ -268,20 +268,44 @@ To run the other three parameter combinations:
 - In the code above, replace `M7vM8_F61` by `M7vM8_F3X4` and `codeml_M0_tree__unrooted_tree__F61.tre` by `codeml_M0_tree__unrooted_tree__F3X4.tre`
 - In the code above, replace `M7vM8_F61` by `M1avM2a_F3X4` and `codeml_M0_tree__unrooted_tree__F61.tre` by `codeml_M0_tree__unrooted_tree__F3X4.tre`
 
+3. Gather and parse the codeml results<br/>
+
+First, `process_single_run_codeml_results.pl` processess the results for the individual analyses: (i) extensive checks to see if codeml ran correctly, (ii) copies relevant result files, (iii) parses the relevant results from the various mysterious `codeml` output files, (iv) combines everything into results tables.
+```bash
+cd codeml_M7vM8_F61/
+mkdir codeml_results_parsed
+find codeml_results/ -type d | grep ENSG | parallel --max-procs 4 --joblog parallel_parse_codeml_results__M7vM8_F61.log 'perl ../process_single_run_codeml_results.pl {}' &> parallel_parse_codeml_results__M7vM8_F61.output
+```
+
+Then the results of the individual analyses are collected into two big tables:
+```bash
+find codeml_results_parsed/ -name "*residues_codeml_results" | sort | xargs cat > M7vM8_F61__analysis_11096_genes.residues_codeml_results
+find codeml_results_parsed/ -name "*alignment_codeml_results" | sort | xargs cat > M7vM8_F61__analysis_11096_genes.alignment_codeml_results
+```
 
 
 
-**********************
-3. XXXXXXXXX
-PARSE and gather codeml resutls
+
+
+
+
 **********************
 !!!!!!!
 dir structure: codeml_M7vM8_F61
 ipv (previously)
 M7vM8_F61
 **********************
-```bash
-```
+
+
+
+
+
+
+
+
+
+
+
 
 
 In the first of two steps for inferring positive selection using codeml, the 11,096 filtered and masked alignments were subjected to ML analysis under evolutionary models that limit dN/dS to range from 0 to 1 (‘neutral’ model) and under models that allow dN/dS > 1 (‘selection’ model; Text S1)(19). Genes were inferred to have evolved under positive selection if the likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (PLRT < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations. 
@@ -311,6 +335,9 @@ find sequences/cds/ | grep prank | wc -l
 tail -f parallel_guidance-prank-codon.log
 find sequences/guidance-prank-codon/ -type f | grep PRANK.std$ | xargs cat | grep Writing -A 1
 
+
+CHECK parallel logs! ...*pl
+to get an indication if things ran OK (though unfortunately not all programs exit with an error message if they , so our scripts also extensively check for whether all the various steps ran correctly in other ways)
 
 
 
