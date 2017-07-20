@@ -247,7 +247,7 @@ cd ..
 
 
 #### 4c. Gather and parse the codeml results
-1. `process_single_run_codeml_results.pl` processess the results for the individual analyses: (i) extensive checks to see if codeml ran correctly, (ii) copies relevant result files, (iii) parses the relevant results from the various mysterious `codeml` output files, (iv) combines everything into results tables.
+1. `process_single_run_codeml_results.pl` processes the results for the individual analyses: (i) extensive checks to see if codeml ran correctly, (ii) copies relevant result files, (iii) parses the relevant results from the various mysterious `codeml` output files, (iv) combines everything into results tables.
 ```bash
 cd codeml_M7vM8_F61/
 mkdir codeml_results_parsed
@@ -268,7 +268,7 @@ Again, to run the other three parameter combinations:
 
 
 #### 4d. Statistical analysis and intersection of the different parameters combinations
-Combines the results of the different parameter combination runs to select alignments and residues that fulfill our stringent confidence criteria and are thus inferred to have evolved under positive selection. These critera are the following (refer to the paper for more details):<br/>
+Combines the results of the different parameter combination runs to select alignments and residues that fulfill our stringent confidence criteria and are thus inferred to have evolved under positive selection. These criteria are the following (refer to the paper for more details):<br/>
 - The likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (P < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations.
 - We included apparent Positively Selected Residues (aPSR) if their codons were assigned high Bayesian (BEB) posteriors under all four ML parameter combinations (Pposterior (ω > 1) > 0.99).
 
