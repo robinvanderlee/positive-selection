@@ -98,6 +98,9 @@ GNU Parallel (https://www.gnu.org/software/parallel/)
 #### PAML
 PAML software package, which includes `codeml` (http://abacus.gene.ucl.ac.uk/software/paml.html)
 
+#### Technical checks
+Make sure you check the `GNU Parallel` logs (`perl parse_parallel_logs.pl all`) to get an indication that steps finished correctly. Though unfortunately not all programs exit with an error message if they fail, so our scripts also extensively check for whether the various steps ran correctly in other ways.
+
 
 ## Steps
 
@@ -312,16 +315,4 @@ find . -name "M*_codeml_results" | parallel 'cp {} codeml_results_combined/codem
 
 ### 5. Quality control and curation
 To assess the reliability of our procedure we performed systematic manual inspection of all aPSR and aPSG. Details are described in the paper. Alignment visualization is described in the [Supplementary data and material](Supplementary_data_and_material): [Visualization_and_quality_control_of_alignments_and_positive_selection_profiles](Supplementary_data_and_material/Visualization_and_quality_control_of_alignments_and_positive_selection_profiles/)
-
-
-
-
-
-
-
-### Checks
-Make sure you check the `GNU Parallel` logs to get an indication that steps finished OK. Though unfortunately not all programs exit with an error message if they fail, so our scripts also extensively check for whether the various steps ran correctly in other ways.
-```bash
-perl parse_parallel_logs.pl all
-```
 
