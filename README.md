@@ -1,6 +1,6 @@
 # Genome-scale detection of positive selection in 9 primates
 
-This page contains scripts, analyses and procedures developed in:
+This page contains procedures, scripts and analyses developed in:
 
 > **Genome-scale detection of positive selection in 9 primates predicts human-virus evolutionary conflicts**
 > Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
@@ -26,11 +26,7 @@ Note that these scripts were not designed to function as a fully-automated pipel
 
 ## Supplementary data and material
 
-Additional data and material can be found at:
-- This GitHub page: [Supplementary data and material](Supplementary_data_and_material)<br/>
-
-and
-- http://www.cmbi.umcn.nl/~rvdlee/positive_selection/
+Additional data and material can be found here: [Supplementary data and material](Supplementary_data_and_material).
 
 
 ## Requirements

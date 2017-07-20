@@ -1,6 +1,6 @@
 # Supplementary Data and Material
 
-This directory contain Supplementary Data and Material for
+This directory contains Supplementary Data and Material for
 
 > **Genome-scale detection of positive selection in 9 primates predicts human-virus evolutionary conflicts**
 > Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
