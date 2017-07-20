@@ -296,9 +296,9 @@ Again, to run the other three parameter combinations:
 
 
 #### 4d. Statistical analysis and intersection of the different parameters combinations
-Combines the results of the different parameter combination runs to select alignments and residues that fulfill our stringent confidence criteria and are thus inferred to have evolved under positive selection. These critera are the following, refer to the paper for more details:<br/>
+Combines the results of the different parameter combination runs to select alignments and residues that fulfill our stringent confidence criteria and are thus inferred to have evolved under positive selection. These critera are the following (refer to the paper for more details):<br/>
 - The likelihood ratio test (LRT) indicates that the selection model provides a significantly better fit to the data than does the neutral model (P < 0.05, after Benjamini Hochberg correction for testing 11,096 genes). We included apparent Positively Selected Genes (aPSG) if they met the LRT significance criteria under all four tested ML parameter combinations.
-- Second, for the significant aPSG we retrieved from the site-specific codeml ML analyses (step one, above) the  posterior probabilities, which indicate the individual codons that may have evolved under positive selection (Text S1)(39). We included apparent Positively Selected Residues (aPSR) if their codons were assigned high Bayesian (BEB) posteriors under all four ML parameter combinations (Pposterior (ω > 1) > 0.99).
+- We included apparent Positively Selected Residues (aPSR) if their codons were assigned high Bayesian (BEB) posteriors under all four ML parameter combinations (Pposterior (ω > 1) > 0.99).
 
 1. Collect the base result files from the previous step.
 ```bash
@@ -310,11 +310,12 @@ find . -name "M*_codeml_results" | parallel 'cp {} codeml_results_combined/codem
 2. `analyze_and_combine_codeml_results.r`. Combines base result files, performs P value and multiple testing calculations, and selects the final set of alignments and residues fulfilling the criteria.
 
 
+### 5. Quality control and curation
+To assess the reliability of our procedure we performed systematic manual inspection of all aPSR and aPSG. Details are described in the paper. Alignment visualization is described in the [Supplementary data and material](Supplementary_data_and_material): [Visualization_and_quality_control_of_alignments_and_positive_selection_profiles](Supplementary_data_and_material/Visualization_and_quality_control_of_alignments_and_positive_selection_profiles/)
 
 
-************
-And then QQ, refer to paper.
-	and the supp jalview files etc.
+
+
 
 
 
@@ -323,44 +324,4 @@ Make sure you check the `GNU Parallel` logs to get an indication that steps fini
 ```bash
 perl parse_parallel_logs.pl all
 ```
-
-
-
-
-
-???
-### 5. Quality control and curation
-
-Quality control
-We subjected each inferred aPSR and aPSG to visual inspection (Table S3). In this way we identified several indicators for positive selection artefacts that we then used for their automated detection in the complete set. First, we obtained the gene trees for our individual masked alignments using RAxML (38)(-f a -m GTRGAMMAI -N 100). Type-I [orthology] and -II [transcript definitions] artefacts tend to lead to gene trees with (i) a long-branched clade consisting of the set of sequences that are distinct from the others (e.g. paralogs, alternative exons), and (ii) a topology that is not congruent with the well-supported species phylogeny (Figure S3). We filtered out likely false positives by selecting gene trees with an extreme longest/average branch length ratio. Second, to assess the distribution of PSR across exons, we mapped Ensembl exon coordinates for human transcripts to the human protein sequences. Type-II [transcript definitions] and -III [termini] artefacts could often be filtered out by a high concentration of aPSR located to a single exon (Supplementary Files).
-
-
-RAxML gene trees
-find ../sequences/prank-codon-masked/ -type f -name "*prank-codon-guidance-tcs-masked-species-sorted.aln.phy" | parallel --max-procs 36 --nice 5 --joblog parallel_gene-trees-prank-codon-guidance-tcs-masked-species-sorted-alignments.log --eta 'perl get_raxml_gene_tree.pl {}'
-
-
-
-*****
-View alignments and annotations
-```bash
-Java	-Djava.ext.dirs=/Applications/Jalview/lib/
-	-cp /Applications/Jalview/jalview.jar jalview.b.Jalview
-	-open <ENSEMBL_ID>__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.translated.fa
-```
-*****
-Jalview annotation files contain annotations for the positively selected residues (PSR), as well as exon coordinates mapped to protein sequences. They can be loaded together with the correct corresponding alignment using (on Mac):
-```bash
-Java	-Djava.ext.dirs=/Applications/Jalview/lib/
-	-cp /Applications/Jalview/jalview.jar jalview.b.Jalview
-	-open <ENSEMBL_ID>__cds.prank-codon-guidance-tcs-masked-species-sorted.aln.translated.fa
-	-annotations <ENSEMBL_ID>.jalview_aln_feature
-	-features <ENSEMBL_ID>.jalview_seq_feature
-```
-
-
-
-
-
-
-
 
