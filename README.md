@@ -54,37 +54,6 @@ Our scripts depend on various programs and modules to run. Refer to the paper fo
 #### R
 - R: https://www.r-project.org/
 
-*****************
-- Install the following packages:
-	- ``
-R
-	+ modules
-	?? gebruik ik dit script? ./Biological_correlations_PSR/basic_statistics_of_data/aa_freqs/analyze_aa_freqs.r:require(lattice)
-library("plyr")
-
-
-
-library("Biostrings")
-library("biomaRt")
-library("ggplot2")
-library("phangorn")
-library("session")
-library(GenomicRanges)
-library(MASS)
-library(data.table)
-library(dplyr)
-library(ggplot2)
-library(gplots)
-library(gridExtra)
-library(jsonlite)
-library(parallel)
-library(plotrix)
-library(rtracklayer)
-library(scales)
-library(vioplot)
-*****************
-
-
 #### Command line tools
 GNU Parallel (https://www.gnu.org/software/parallel/)
 
