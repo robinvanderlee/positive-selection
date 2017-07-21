@@ -115,7 +115,7 @@ This step finds the fasta files containing cDNA sequences for the species of int
 ```bash
 find sequences/ -type f -name "*__cds.fa" | parallel --max-procs 4 --joblog parallel_prank-codon.log --eta 'prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet > /dev/null'
 ```
-This effectively execute the following commands:
+This effectively executes the following commands:
 ```bash
 find sequences/ -type f -name "*__cds.fa" | parallel 'echo prank +F -codon -d={} -o={.}.prank-codon.aln.fa -quiet'
 ...
