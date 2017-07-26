@@ -65,19 +65,6 @@ analyze.alignment_codeml_results <- function(codeml.parameter.combination){
     
     
     ### analyze the new data frames as the correct data types
-    
-    # doesn't work # lapply(lapply(aln.data.split, function(x) do.call(data.frame, aln.data.split[[1]])), str)
-    
-    # doesn't work
-    # sapply(names(aln.data.split), function(x){
-    #         if(x %in% info.category.integer){
-    #             tmp <- as.integer(aln.data.split[[x]]$info.value)
-    #             aln.data.split[[x]]$info.value <- tmp
-    #         } else {
-    #             print("N")
-    #         }
-    #     })
-    
     info.category.integer <- c("null_model_np", "alternative_model_np", "LRT_degrees_of_freedom", "codeml_outfile_convergence_warnings", "rub_convergence_warnings", "length_alignment", "length_human_sequence")
     info.category.character <- c("null_model", "alternative_model")
     info.category.numeric <- c("null_model_lnL", "alternative_model_lnL", "alternative_model_kappa", "alternative_model_omega", "LRT_statistic", "LRT_P_value_full", "LRT_P_value_scientific")

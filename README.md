@@ -31,7 +31,7 @@ Additional data and material can be found here: [Supplementary data and material
 
 ## Requirements
 
-Our scripts depend on various programs and modules to run. Refer to the paper for which versions were used.
+Our scripts depend on various programs and modules to run. Versions mentioned below refer to those used for the analyses described in the paper.<br/>
 *Make sure all of these programs are in your [`$PATH`](http://www.linfo.org/path_env_var.html)*.<br/>
 
 #### Perl
@@ -45,7 +45,7 @@ Our scripts depend on various programs and modules to run. Refer to the paper fo
 
 #### BioPerl & Ensembl API
 - BioPerl `cpanm Bio::Perl` (http://bioperl.org/)
-- Ensembl API (http://www.ensembl.org/info/docs/api/index.html)
+- Ensembl API (http://www.ensembl.org/info/docs/api/index.html) - release 78, December 2014 (http://dec2014.archive.ensembl.org/)
 
 #### R
 - R: https://www.r-project.org/
@@ -54,14 +54,14 @@ Our scripts depend on various programs and modules to run. Refer to the paper fo
 GNU Parallel (https://www.gnu.org/software/parallel/)
 
 #### Aligners and alignment analysis tools
-- PRANK multiple sequence aligner (http://wasabiapp.org/software/prank/)
-- GUIDANCE (http://guidance.tau.ac.il/)<br/>
+- PRANK multiple sequence aligner (http://wasabiapp.org/software/prank/) - v.140603
+- GUIDANCE (http://guidance.tau.ac.il/) - v1.5<br/>
 *Note that a bug fix is required for GUIDANCE (version 1.5 - 2014, August 7) to work with PRANK, see [GUIDANCE_source_code_fix_for_running_PRANK](Supplementary_data_and_material/GUIDANCE_source_code_fix_for_running_PRANK/)*
-- t_coffee, which includes `TCS` (http://www.tcoffee.org/Projects/tcoffee/)
+- t_coffee, which includes `TCS` (http://www.tcoffee.org/Projects/tcoffee/) - Version_11.00.61eb9e4
 - Jalview alignment viewer (http://www.jalview.org/)
 
 #### PAML
-PAML software package, which includes `codeml` (http://abacus.gene.ucl.ac.uk/software/paml.html)
+PAML software package, which includes `codeml` (http://abacus.gene.ucl.ac.uk/software/paml.html) - v4.8a
 
 #### Technical checks
 Make sure you check the `GNU Parallel` logs (`perl parse_parallel_logs.pl all`) to get an indication that steps finished correctly. Though unfortunately not all programs exit with an error message if they fail, so our scripts also extensively check for whether the various steps ran correctly in other ways.

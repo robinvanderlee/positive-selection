@@ -108,7 +108,6 @@ $reg->load_registry_from_db(
   -user=>'anonymous', 
   );
 $reg->set_reconnect_when_lost(); # should prevent errors like: DBD::mysql::st execute failed: Lost connection to MySQL server during query at $PATH_TO_Ensembl_API/ensembl/modules/Bio/EnsEMBL/DBSQL/TranscriptAdaptor.pm line 238, <IN> line 25.
-# TODO CHECK AND PRINT ENSEMBL VERSION
 
 
 

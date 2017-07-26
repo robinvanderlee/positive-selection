@@ -64,13 +64,6 @@ while (my $basedir_file = readdir(BASEDIR)) {
 
 	my $CURRENT_GUIDANCE_DIRECTORY = "$BASE_DIRECTORY/$basedir_file";
 
-	# opendir(CURGUIDANCEDIR, $CURRENT_GUIDANCE_DIRECTORY) or die $!;
-	### loop over all files within the current guidance results directory
-	# while (my $curguidancedir_file = readdir(CURGUIDANCEDIR)){
-	# 	next unless(-f "$CURRENT_GUIDANCE_DIRECTORY/$curguidancedir_file"); # only loop over files
-	# 	print $curguidancedir_file . "\n";
-	# }
-
 
 	### CHECKS
 	eval { checkPrankStdoutLog("$CURRENT_GUIDANCE_DIRECTORY" . "/" . "MSA.PRANK.aln.std") };
