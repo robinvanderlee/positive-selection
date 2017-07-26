@@ -21,7 +21,7 @@ If you found this resource useful, please consider citing the paper.
 (11,170 files, 9 sequences per file, 1 per primate)
 
 - Protein sequences<br/>
-`protein_sequences_11170_genes.tar`<br/>
+`protein_sequences_11170_genes.tar.gz`<br/>
 (11,170 files, 9 sequences per file, 1 per primate)
 
 
