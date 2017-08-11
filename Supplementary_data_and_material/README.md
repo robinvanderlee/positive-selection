@@ -4,7 +4,7 @@ This directory contains Supplementary Data and Material for
 
 > **Genome-scale detection of positive selection in 9 primates predicts human-virus evolutionary conflicts**
 > Robin van der Lee, Laurens Wiel, Teunis J.P. van Dam, Martijn A. Huynen  
-> bioRxiv 131680; https://doi.org/10.1101/131680
+> Nucleic Acids Research 2017; https://doi.org/10.1093/nar/gkx704
 
 > Centre for Molecular and Biomolecular Informatics - Radboud Institute for Molecular Life Sciences<br/>
 > Radboud university medical center<br/>
